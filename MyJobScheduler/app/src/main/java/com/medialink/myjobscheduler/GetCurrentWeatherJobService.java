@@ -12,7 +12,6 @@ import android.os.Build;
 import android.util.Log;
 
 import androidx.core.app.NotificationCompat;
-import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.ContextCompat;
 
 import com.loopj.android.http.AsyncHttpClient;
@@ -70,6 +69,7 @@ public class GetCurrentWeatherJobService extends JobService {
                     String title = "Current Weather";
                     String message = currentWeather + ", " + description + " with "
                             + temprature + " celcius";
+                    Log.d(TAG, message);
                     int notifId = 100;
 
                     showNotification(getApplicationContext(), title, message, notifId);
@@ -94,7 +94,7 @@ public class GetCurrentWeatherJobService extends JobService {
         NotificationManager notifManagerCompat = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Uri alarmSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
         NotificationCompat.Builder builder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                .setContentTitle(title)
+                .setContentText(message)
                 .setSmallIcon(R.drawable.ic_replay_30_black_24dp)
                 .setContentTitle(title)
                 .setColor(ContextCompat.getColor(context, android.R.color.black))
