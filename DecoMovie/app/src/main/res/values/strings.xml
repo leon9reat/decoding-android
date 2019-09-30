@@ -1,0 +1,27 @@
+<resources>
+    <string name="app_name">DecoMovie</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="tab_movie">Movie</string>
+    <string name="tab_tv">TV Show</string>
+    <string name="ubah_bahasa">Change Language</string>
+    <string name="hello_blank_fragment">Blank Fragment</string>
+    <string name="content_img_cast1">First Cast</string>
+    <string name="content_cast3">Third Cast</string>
+    <string name="content_img_cast2">Second Cast</string>
+    <string name="content_img_cast4">Fourth Cast</string>
+    <string name="content_img_cast5">Fifth Cast</string>
+    <string name="header_cast">Cast</string>
+    <string name="header_overview">Overview</string>
+    <string name="header_title">Movie Title</string>
+    <string name="content_img_cover">Movie Cover</string>
+    <string name="label_status">Status</string>
+    <string name="label_release_date">Release Information</string>
+    <string name="label_genre">Genre</string>
+    <string name="label_runtime">Runtime</string>
+    <string name="label_score">User Score</string>
+    <string name="label_favorite">Favorite</string>
+    <string name="label_rate">Rate It</string>
+    <string name="jam">hr</string>
+    <string name="menit">min</string>
+</resources>

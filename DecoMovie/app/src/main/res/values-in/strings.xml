@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">DecoMovie</string>
+    <string name="hello_blank_fragment">Fragment Kosong</string>
+    <string name="tab_tv">Serial TV</string>
+    <string name="ubah_bahasa">Ubah Bahasa</string>
+    <string name="tab_movie">Film Bioskop</string>
+    <string name="content_cast3">Pemeran Ketiga</string>
+    <string name="content_img_cast1">Pemeran Pertama</string>
+    <string name="content_img_cast2">Pemeran Kedua</string>
+    <string name="content_img_cast4">Pemeran Keempat</string>
+    <string name="content_img_cast5">Pemeran Kelima</string>
+    <string name="content_img_cover">Sampul Film</string>
+    <string name="header_cast">Pemeran</string>
+    <string name="header_overview">Ikhtisar</string>
+    <string name="header_title">Judul Film</string>
+    <string name="label_favorite">Kesukaan</string>
+    <string name="label_genre">Jenis Film</string>
+    <string name="label_rate">Penilaian</string>
+    <string name="label_release_date">Informasi Rilis</string>
+    <string name="label_runtime">Lama Tayang</string>
+    <string name="label_score">Skor Pengguna</string>
+    <string name="label_status">Status</string>
+    <string name="jam">Jam</string>
+    <string name="menit">Menit</string>
+</resources>
