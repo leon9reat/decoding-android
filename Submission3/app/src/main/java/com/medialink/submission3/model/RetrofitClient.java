@@ -24,8 +24,7 @@ public class RetrofitClient {
             OkHttpClient.Builder clientBuilder = new OkHttpClient.Builder();
 
             HttpLoggingInterceptor logIntercept = new HttpLoggingInterceptor();
-            logIntercept.setLevel(HttpLoggingInterceptor.Level.BODY);
-            clientBuilder.addInterceptor(logIntercept);
+            logIntercept.level(HttpLoggingInterceptor.Level.BODY);
 
             Interceptor apiIntercept = new Interceptor() {
                 @NotNull
@@ -42,7 +41,8 @@ public class RetrofitClient {
                     return chain.proceed(resultRequest);
                 }
             };
-            clientBuilder.addInterceptor(apiIntercept);
+            clientBuilder.addInterceptor(apiIntercept)
+                    .addInterceptor(logIntercept);
 
             OkHttpClient client = clientBuilder.build();
 

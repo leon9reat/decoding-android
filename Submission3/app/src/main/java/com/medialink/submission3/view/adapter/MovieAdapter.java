@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.medialink.submission3.BuildConfig;
+import com.medialink.submission3.MovieContract;
 import com.medialink.submission3.R;
 import com.medialink.submission3.model.movie.MovieItem;
 
@@ -23,9 +24,11 @@ import butterknife.ButterKnife;
 public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHolder> {
 
     private String TAG = MovieAdapter.class.getSimpleName();
-    private ArrayList<MovieItem> listMovies;
+    private ArrayList<MovieItem> listMovies = new ArrayList<>();
+    private MovieContract.ViewInterface mView;
 
-    public MovieAdapter() {
+    public MovieAdapter(MovieContract.ViewInterface iView) {
+        this.mView = iView;
     }
 
     public void setData(ArrayList<MovieItem> items) {
@@ -52,11 +55,19 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         Glide.with(holder.itemView.getContext())
                 .load(BuildConfig.ImageUrl + movie.getPosterPath())
                 .into(holder.imgPoster);
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mView.itemClick(movie, position);
+                Log.d(TAG, "onClick: Movie View Holder");
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return listMovies.size();
+        return listMovies == null ? 0 : listMovies.size();
     }
 
     public class MovieViewHolder extends RecyclerView.ViewHolder {
@@ -73,12 +84,6 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
         public MovieViewHolder(@NonNull View itemView) {
             super(itemView);
             ButterKnife.bind(this, itemView);
-            itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    Log.d(TAG, "onClick: Movie View Holder");
-                }
-            });
         }
     }
 

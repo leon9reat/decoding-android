@@ -15,6 +15,10 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/tab_main" />
 
+    <!-- biar lebar tab sesuai ukuran layar
+        app:tabGravity="fill"
+        app:tabMode="fixed"
+        app:tabMaxWidth="0dp" -->
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tab_main"
         android:layout_width="match_parent"
@@ -24,6 +28,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        app:tabMaxWidth="0dp"
         app:tabInlineLabel="true"
         app:tabTextColor="@android:color/white"
         app:tabIconTint="@android:color/white"/>

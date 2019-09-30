@@ -2,13 +2,13 @@ package com.medialink.submission3.view;
 
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
@@ -16,9 +16,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.google.android.material.snackbar.Snackbar;
+import com.medialink.submission3.MovieContract;
 import com.medialink.submission3.R;
 import com.medialink.submission3.model.MainViewModel;
 import com.medialink.submission3.model.movie.MovieItem;
+import com.medialink.submission3.presenter.MoviePresenter;
 import com.medialink.submission3.view.adapter.MovieAdapter;
 
 import java.util.ArrayList;
@@ -30,16 +33,21 @@ import butterknife.Unbinder;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class MovieFragment extends Fragment {
+public class MovieFragment extends Fragment
+        implements MovieContract.ViewInterface {
 
     @BindView(R.id.movie_progress)
     ProgressBar movieProgress;
     @BindView(R.id.rv_movie)
     RecyclerView rvMovie;
+    @BindView(R.id.movie_layout)
+    CoordinatorLayout layoutMovie;
 
+    private final static String TAG = MovieFragment.class.getSimpleName();
     private Unbinder unbinder;
     private MovieAdapter mAdapter;
     private MainViewModel mModel;
+    private MovieContract.PresenterInterface mPresenter;
 
     public MovieFragment() {
         // Required empty public constructor
@@ -53,17 +61,26 @@ public class MovieFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_movie, container, false);
         unbinder = ButterKnife.bind(this, view);
 
+        mPresenter = new MoviePresenter(this);
+
         mModel = ViewModelProviders.of(this).get(MainViewModel.class);
+
+
+        mAdapter = new MovieAdapter(this);
+        mAdapter.notifyDataSetChanged();
+
+        if (getContext() != null) {
+            rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
+            rvMovie.addItemDecoration(new DividerItemDecoration(getContext(), RecyclerView.VERTICAL));
+            rvMovie.setAdapter(mAdapter);
+        }
+
+        //showLoading(true);
+        if (mModel.getMovies().getValue() == null) {
+            mPresenter.getMovies(1);
+        }
         mModel.getMovies().observe(MovieFragment.this, getMovies);
 
-        showLoading(true);
-        mModel.setMovies(1);
-
-        //mAdapter = new MovieAdapter();
-
-        //rvMovie.setLayoutManager(new LinearLayoutManager(getContext()));
-        //rvMovie.addItemDecoration(new DividerItemDecoration(getContext(), RecyclerView.VERTICAL));
-        //rvMovie.setAdapter(mAdapter);
         return view;
     }
 
@@ -92,4 +109,41 @@ public class MovieFragment extends Fragment {
         }
     }
 
+    @Override
+    public void refreshData(ArrayList<MovieItem> list) {
+        mModel.setListMovies(list);
+    }
+
+    @Override
+    public void itemClick(MovieItem movie, int position) {
+        Log.d(TAG, "itemClick: " + movie.getTitle());
+    }
+
+    @Override
+    public void setError(String msg) {
+        showLoading(false);
+        showMessage("Error: " + msg);
+    }
+
+    @Override
+    public void showMessage(String msg) {
+        Snackbar snack = Snackbar.make(layoutMovie, msg, Snackbar.LENGTH_LONG)
+                .setAction("Retry", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        showLoading(true);
+                        mPresenter.getMovies(1);
+                    }
+                })
+                .setActionTextColor(getResources().getColor(R.color.red));
+        snack.show();
+    }
+
+    /**
+     * biar bisa refresh dari activity
+     */
+    public void refreshData() {
+        showLoading(true);
+        mPresenter.getMovies(1);
+    }
 }
