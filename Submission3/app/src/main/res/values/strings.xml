@@ -8,4 +8,23 @@
     <string name="example_release_date">Released Date: 2018-09-28</string>
     <string name="example_description">The true story of Forrest Tucker, from his audacious escape from San Quentin at the age of 70 to an unprecedented string of heists that confounded authorities and enchanted the public. Wrapped up in the pursuit are a detective, who becomes captivated with Forrest’s commitment to his craft, and a woman, who loves him in spite of his chosen profession.</string>
     <string name="content_cover_image">Cover Image</string>
+
+    <string name="content_img_cast1">First Cast</string>
+    <string name="content_cast3">Third Cast</string>
+    <string name="content_img_cast2">Second Cast</string>
+    <string name="content_img_cast4">Fourth Cast</string>
+    <string name="content_img_cast5">Fifth Cast</string>
+    <string name="header_cast">Cast</string>
+    <string name="header_overview">Overview</string>
+    <string name="header_title">Movie Title</string>
+    <string name="content_img_cover">Movie Cover</string>
+    <string name="label_status">Status</string>
+    <string name="label_release_date">Release Information</string>
+    <string name="label_genre">Genre</string>
+    <string name="label_runtime">Runtime</string>
+    <string name="label_score">User Score</string>
+    <string name="label_favorite">Favorite</string>
+    <string name="label_rate">Rate It</string>
+    <string name="jam">hr</string>
+    <string name="menit">min</string>
 </resources>

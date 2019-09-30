@@ -1,6 +1,7 @@
 package com.medialink.submission3.view;
 
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
+import com.medialink.submission3.DetailActivity;
 import com.medialink.submission3.MovieContract;
 import com.medialink.submission3.R;
 import com.medialink.submission3.model.MainViewModel;
@@ -116,6 +118,8 @@ public class MovieFragment extends Fragment
 
     @Override
     public void itemClick(MovieItem movie, int position) {
+        Intent i = new Intent(getContext(), DetailActivity.class);
+        startActivity(i);
         Log.d(TAG, "itemClick: " + movie.getTitle());
     }
 
