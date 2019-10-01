@@ -1,5 +1,6 @@
 package com.medialink.submission3.view.adapter;
 
+import android.content.Context;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -26,8 +27,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     private String TAG = MovieAdapter.class.getSimpleName();
     private ArrayList<MovieItem> listMovies = new ArrayList<>();
     private MovieContract.ViewInterface mView;
+    private Context context;
 
-    public MovieAdapter(MovieContract.ViewInterface iView) {
+    public MovieAdapter(Context context, MovieContract.ViewInterface iView) {
+        this.context = context;
         this.mView = iView;
     }
 
@@ -48,9 +51,10 @@ public class MovieAdapter extends RecyclerView.Adapter<MovieAdapter.MovieViewHol
     @Override
     public void onBindViewHolder(@NonNull MovieViewHolder holder, int position) {
         final MovieItem movie = listMovies.get(position);
+        String releaseLabel = context.getString(R.string.label_release_date);
 
         holder.tvTitleLabel.setText(movie.getTitle());
-        holder.tvReleaseDateLabel.setText(movie.getReleaseDate());
+        holder.tvReleaseDateLabel.setText(releaseLabel + ": " + movie.getReleaseDate());
         holder.tvOverviewLabel.setText(movie.getOverview());
         Glide.with(holder.itemView.getContext())
                 .load(BuildConfig.ImageUrl + movie.getPosterPath())

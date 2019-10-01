@@ -14,6 +14,7 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.medialink.submission3.view.MovieFragment;
+import com.medialink.submission3.view.TvFragment;
 import com.medialink.submission3.view.adapter.PagerAdapter;
 
 import butterknife.BindView;
@@ -103,9 +104,10 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == 101) {
             // setelah ganti bahasa, refresh lagi datanya
-            Log.d(TAG, "onActivityResult: Ubah Setting Bahasa");
             ((MovieFragment) getSupportFragmentManager().getFragments().get(0)).refreshMovie();
-            //((TvFragment)    getSupportFragmentManager().getFragments().get(1)).addDataTv();
+            ((TvFragment)    getSupportFragmentManager().getFragments().get(1)).refreshTv();
+
+            Log.d(TAG, "onActivityResult: Ubah Setting Bahasa");
         }
     }
 }

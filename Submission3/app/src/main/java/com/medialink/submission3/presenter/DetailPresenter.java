@@ -9,9 +9,12 @@ import com.medialink.submission3.DetailContract;
 import com.medialink.submission3.model.ApiInterface;
 import com.medialink.submission3.model.MainViewModel;
 import com.medialink.submission3.model.RetrofitClient;
-import com.medialink.submission3.model.movie.CastItem;
+import com.medialink.submission3.model.movie.MovieCastItem;
 import com.medialink.submission3.model.movie.MovieCreditRespon;
 import com.medialink.submission3.model.movie.MovieDetailRespon;
+import com.medialink.submission3.model.tv.TvCastItem;
+import com.medialink.submission3.model.tv.TvCreditRespon;
+import com.medialink.submission3.model.tv.TvDetailRespon;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -84,7 +87,7 @@ public class DetailPresenter implements DetailContract.PresenterInterface {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
                         MovieCreditRespon movieCredit = response.body();
-                        mModel.postMovieCast((ArrayList<CastItem>) movieCredit.getCast());
+                        mModel.postMovieCast((ArrayList<MovieCastItem>) movieCredit.getCast());
                         mViewInterface.showLoading(false);
                         Log.d(TAG, "onResponse: "+movieCredit.getId());
                     }
@@ -97,6 +100,77 @@ public class DetailPresenter implements DetailContract.PresenterInterface {
 
             @Override
             public void onFailure(Call<MovieCreditRespon> call, Throwable t) {
+                mViewInterface.showLoading(false);
+                mViewInterface.setError(t.getMessage());
+                Log.d(TAG, "onFailure: "+t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void getTvDetail(int id) {
+        mViewInterface.showLoading(true);
+
+        ApiInterface service = RetrofitClient.getRetrofitInstance().create(ApiInterface.class);
+
+        // setting bahasa
+        String lang = "en-US";
+        if (Locale.getDefault().getLanguage().equalsIgnoreCase("in")) lang = "id-ID";
+
+        Call<TvDetailRespon> call = service.getTvDetail(id, lang);
+        call.enqueue(new Callback<TvDetailRespon>() {
+            @Override
+            public void onResponse(Call<TvDetailRespon> call, Response<TvDetailRespon> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        TvDetailRespon tvDetail = response.body();
+                        mModel.postTvDetail(tvDetail);
+                        mViewInterface.showLoading(false);
+
+                        Log.d(TAG, "onResponse: "+tvDetail.getName());
+                    }
+                } else {
+                    mViewInterface.showLoading(false);
+                    mViewInterface.setError(response.message());
+                    Log.d(TAG, "onResponse: "+response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TvDetailRespon> call, Throwable t) {
+                mViewInterface.showLoading(false);
+                mViewInterface.setError(t.getMessage());
+                Log.d(TAG, "onFailure: "+t.getMessage());
+            }
+        });
+    }
+
+    @Override
+    public void getTvCredit(int id) {
+        mViewInterface.showLoading(true);
+
+        ApiInterface service = RetrofitClient.getRetrofitInstance().create(ApiInterface.class);
+
+        Call<TvCreditRespon> call = service.getTvCredit(id);
+        call.enqueue(new Callback<TvCreditRespon>() {
+            @Override
+            public void onResponse(Call<TvCreditRespon> call, Response<TvCreditRespon> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        TvCreditRespon tvCredit = response.body();
+                        mModel.postTvCast((ArrayList<TvCastItem>) tvCredit.getCast());
+                        mViewInterface.showLoading(false);
+                        Log.d(TAG, "onResponse: "+tvCredit.getId());
+                    }
+                } else {
+                    mViewInterface.showLoading(false);
+                    mViewInterface.setError(response.message());
+                    Log.d(TAG, "onResponse: "+response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TvCreditRespon> call, Throwable t) {
                 mViewInterface.showLoading(false);
                 mViewInterface.setError(t.getMessage());
                 Log.d(TAG, "onFailure: "+t.getMessage());

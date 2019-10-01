@@ -2,7 +2,7 @@ package com.medialink.submission3.model.movie;
 
 import com.google.gson.annotations.SerializedName;
 
-public class CastItem{
+public class MovieCastItem {
 
 	@SerializedName("cast_id")
 	private int castId;

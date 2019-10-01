@@ -70,12 +70,13 @@ public class MovieFragment extends Fragment
             mModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
             mModel.getMovies().observe(MovieFragment.this, getMovies);
 
+            showLoading(false);
             if (mModel.getMovies().getValue() == null) {
                 refreshMovie();
             }
         }
 
-        mAdapter = new MovieAdapter(this);
+        mAdapter = new MovieAdapter(getContext(),this);
         mAdapter.notifyDataSetChanged();
 
         if (getContext() != null) {

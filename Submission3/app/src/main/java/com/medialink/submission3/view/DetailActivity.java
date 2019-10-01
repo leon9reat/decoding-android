@@ -1,6 +1,7 @@
 package com.medialink.submission3.view;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -19,8 +20,10 @@ import com.medialink.submission3.Const;
 import com.medialink.submission3.DetailContract;
 import com.medialink.submission3.R;
 import com.medialink.submission3.model.MainViewModel;
-import com.medialink.submission3.model.movie.CastItem;
+import com.medialink.submission3.model.movie.MovieCastItem;
 import com.medialink.submission3.model.movie.MovieDetailRespon;
+import com.medialink.submission3.model.tv.TvCastItem;
+import com.medialink.submission3.model.tv.TvDetailRespon;
 import com.medialink.submission3.presenter.DetailPresenter;
 
 import java.util.ArrayList;
@@ -100,8 +103,7 @@ public class DetailActivity extends AppCompatActivity
         ButterKnife.bind(this);
 
         mModel = ViewModelProviders.of(this).get(MainViewModel.class);
-        mModel.getMovieDetail().observe(this, getMovieDetail);
-        mModel.getMovieCast().observe(this, getMovieCast);
+
 
         mPresenter = new DetailPresenter(this, this);
 
@@ -111,10 +113,18 @@ public class DetailActivity extends AppCompatActivity
 
         if (type == Const.INTENT_MOVIE) {
             // movie
+            mModel.getMovieDetail().observe(this, getMovieDetail);
+            mModel.getMovieCast().observe(this, getMovieCast);
+
             mPresenter.getMovieDetail(id);
             mPresenter.getMovieCredit(id);
         } else {
             // tv show
+            mModel.getTvDetail().observe(this, getTvDetail);
+            mModel.getTvCast().observe(this, getTvCast);
+
+            mPresenter.getTvDetail(id);
+            mPresenter.getTvCredit(id);
         }
 
     }
@@ -126,38 +136,60 @@ public class DetailActivity extends AppCompatActivity
         }
     };
 
-    private Observer<ArrayList<CastItem>> getMovieCast = new Observer<ArrayList<CastItem>>() {
+    private Observer<ArrayList<MovieCastItem>> getMovieCast = new Observer<ArrayList<MovieCastItem>>() {
         @Override
-        public void onChanged(ArrayList<CastItem> castItems) {
+        public void onChanged(ArrayList<MovieCastItem> castItems) {
             setCastView(castItems);
         }
     };
 
-    private void setCastView(ArrayList<CastItem> list) {
-        if (list != null) {
-            if (list.size() > 6) {
-                tvCast1.setText(list.get(0).getName());
-                tvCast2.setText(list.get(1).getName());
-                tvCast3.setText(list.get(2).getName());
-                tvCast4.setText(list.get(3).getName());
-                tvCast5.setText(list.get(4).getName());
+    private Observer<TvDetailRespon> getTvDetail = new Observer<TvDetailRespon>() {
+        @Override
+        public void onChanged(TvDetailRespon tvDetailRespon) {
+            setTvView(tvDetailRespon);
+        }
+    };
 
+    private Observer<ArrayList<TvCastItem>> getTvCast = new Observer<ArrayList<TvCastItem>>() {
+        @Override
+        public void onChanged(ArrayList<TvCastItem> castItems) {
+            setTvCastView(castItems);
+            Log.d("test", "onChanged: "+castItems.size());
+        }
+    };
+
+    private void setCastView(ArrayList<MovieCastItem> list) {
+        if (list != null) {
+            if (list.get(0) != null) {
+                tvCast1.setText(list.get(0).getName());
                 Glide.with(getApplicationContext())
                         .load(BuildConfig.ImageUrl + list.get(0).getProfilePath())
                         .circleCrop()
                         .into(imgCast1);
+            }
+            if (list.get(1) != null) {
+                tvCast2.setText(list.get(1).getName());
                 Glide.with(getApplicationContext())
                         .load(BuildConfig.ImageUrl + list.get(1).getProfilePath())
                         .circleCrop()
                         .into(imgCast2);
+            }
+            if (list.get(2) != null) {
+                tvCast3.setText(list.get(2).getName());
                 Glide.with(getApplicationContext())
                         .load(BuildConfig.ImageUrl + list.get(2).getProfilePath())
                         .circleCrop()
                         .into(imgCast3);
+            }
+            if (list.get(3) != null) {
+                tvCast4.setText(list.get(3).getName());
                 Glide.with(getApplicationContext())
                         .load(BuildConfig.ImageUrl + list.get(3).getProfilePath())
                         .circleCrop()
                         .into(imgCast4);
+            }
+            if (list.get(4) != null) {
+                tvCast5.setText(list.get(4).getName());
                 Glide.with(getApplicationContext())
                         .load(BuildConfig.ImageUrl + list.get(4).getProfilePath())
                         .circleCrop()
@@ -197,6 +229,7 @@ public class DetailActivity extends AppCompatActivity
 
     private void setMovieView(MovieDetailRespon movie) {
         tvTitleLabel.setText(movie.getTitle());
+        tvReleaseDateLabel.setText(getString(R.string.label_release_date));
         tvReleaseDate.setText(movie.getReleaseDate());
         tvOverview.setText(movie.getOverview());
         tvScore.setText(String.valueOf(movie.getVoteAverage()));
@@ -205,6 +238,9 @@ public class DetailActivity extends AppCompatActivity
                 .load(BuildConfig.ImageUrl + movie.getPosterPath())
                 .fitCenter()
                 .into(imgCover);
+
+        String labelRuntime = getString(R.string.label_runtime_movie);
+        tvRuntimeLabel.setText(labelRuntime);
 
         int min = movie.getRuntime();
         int hr = min / 60;
@@ -224,6 +260,78 @@ public class DetailActivity extends AppCompatActivity
                 }
             }
             tvGenre.setText(genre);
+        }
+    }
+
+    private void setTvView(TvDetailRespon tv) {
+        tvTitleLabel.setText(tv.getName());
+        tvReleaseDateLabel.setText(getString(R.string.label_release_date_tv));
+        tvReleaseDate.setText(tv.getFirstAirDate());
+        tvOverview.setText(tv.getOverview());
+        tvScore.setText(String.valueOf(tv.getVoteAverage()));
+
+        Glide.with(getApplicationContext())
+                .load(BuildConfig.ImageUrl + tv.getPosterPath())
+                .fitCenter()
+                .into(imgCover);
+
+        int season = tv.getNumberOfSeasons();
+        int episode = tv.getNumberOfEpisodes();
+        String labelRuntime = getString(R.string.label_runtime_tv);
+        tvRuntimeLabel.setText(labelRuntime);
+        tvStatus.setText(tv.getStatus());
+        tvRuntime.setText(season + " / " + episode);
+
+        if (tv.getGenres() != null) {
+            String genre = "";
+            for (int i = 0; i < tv.getGenres().size(); i++) {
+                if (genre.isEmpty()) {
+                    genre = tv.getGenres().get(i).getName();
+                } else {
+                    genre = genre + ", " + tv.getGenres().get(i).getName();
+                }
+            }
+            tvGenre.setText(genre);
+        }
+    }
+
+    private void setTvCastView(ArrayList<TvCastItem> list) {
+        if (list != null) {
+            if (list.get(0) != null) {
+                tvCast1.setText(list.get(0).getName());
+                Glide.with(getApplicationContext())
+                        .load(BuildConfig.ImageUrl + list.get(0).getProfilePath())
+                        .circleCrop()
+                        .into(imgCast1);
+            }
+            if (list.get(1) != null) {
+                tvCast2.setText(list.get(1).getName());
+                Glide.with(getApplicationContext())
+                        .load(BuildConfig.ImageUrl + list.get(1).getProfilePath())
+                        .circleCrop()
+                        .into(imgCast2);
+            }
+            if (list.get(2) != null) {
+                tvCast3.setText(list.get(2).getName());
+                Glide.with(getApplicationContext())
+                        .load(BuildConfig.ImageUrl + list.get(2).getProfilePath())
+                        .circleCrop()
+                        .into(imgCast3);
+            }
+            if (list.get(3) != null) {
+                tvCast4.setText(list.get(3).getName());
+                Glide.with(getApplicationContext())
+                        .load(BuildConfig.ImageUrl + list.get(3).getProfilePath())
+                        .circleCrop()
+                        .into(imgCast4);
+            }
+            if (list.get(4) != null) {
+                tvCast5.setText(list.get(4).getName());
+                Glide.with(getApplicationContext())
+                        .load(BuildConfig.ImageUrl + list.get(4).getProfilePath())
+                        .circleCrop()
+                        .into(imgCast5);
+            }
         }
     }
 }

@@ -14,5 +14,7 @@ public interface DetailContract {
     interface PresenterInterface {
         void getMovieDetail(int id);
         void getMovieCredit(int id);
+        void getTvDetail(int id);
+        void getTvCredit(int id);
     }
 }
