@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface MovieContract {
     interface ViewInterface {
-        void refreshData(ArrayList<MovieItem> list);
+        void setMovie(ArrayList<MovieItem> list);
         void itemClick(MovieItem movie, int position);
         void setError(String msg);
         void showMessage(String msg);

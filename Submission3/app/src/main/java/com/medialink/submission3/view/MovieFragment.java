@@ -18,7 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
-import com.medialink.submission3.DetailActivity;
+import com.medialink.submission3.Const;
 import com.medialink.submission3.MovieContract;
 import com.medialink.submission3.R;
 import com.medialink.submission3.model.MainViewModel;
@@ -50,6 +50,7 @@ public class MovieFragment extends Fragment
     private MovieAdapter mAdapter;
     private MainViewModel mModel;
     private MovieContract.PresenterInterface mPresenter;
+    private int mPage = 1;
 
     public MovieFragment() {
         // Required empty public constructor
@@ -65,8 +66,14 @@ public class MovieFragment extends Fragment
 
         mPresenter = new MoviePresenter(this);
 
-        mModel = ViewModelProviders.of(this).get(MainViewModel.class);
+        if (getActivity() != null ) {
+            mModel = ViewModelProviders.of(getActivity()).get(MainViewModel.class);
+            mModel.getMovies().observe(MovieFragment.this, getMovies);
 
+            if (mModel.getMovies().getValue() == null) {
+                refreshMovie();
+            }
+        }
 
         mAdapter = new MovieAdapter(this);
         mAdapter.notifyDataSetChanged();
@@ -76,12 +83,6 @@ public class MovieFragment extends Fragment
             rvMovie.addItemDecoration(new DividerItemDecoration(getContext(), RecyclerView.VERTICAL));
             rvMovie.setAdapter(mAdapter);
         }
-
-        //showLoading(true);
-        if (mModel.getMovies().getValue() == null) {
-            mPresenter.getMovies(1);
-        }
-        mModel.getMovies().observe(MovieFragment.this, getMovies);
 
         return view;
     }
@@ -112,13 +113,15 @@ public class MovieFragment extends Fragment
     }
 
     @Override
-    public void refreshData(ArrayList<MovieItem> list) {
+    public void setMovie(ArrayList<MovieItem> list) {
         mModel.setListMovies(list);
     }
 
     @Override
     public void itemClick(MovieItem movie, int position) {
         Intent i = new Intent(getContext(), DetailActivity.class);
+        i.putExtra(Const.KEY_ID, movie.getId());
+        i.putExtra(Const.KEY_TYPE, Const.INTENT_MOVIE);
         startActivity(i);
         Log.d(TAG, "itemClick: " + movie.getTitle());
     }
@@ -135,9 +138,7 @@ public class MovieFragment extends Fragment
                 .setAction("Retry", new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        showLoading(true);
-                        mPresenter.getMovies(1);
-                    }
+                        refreshMovie();                    }
                 })
                 .setActionTextColor(getResources().getColor(R.color.red));
         snack.show();
@@ -146,8 +147,9 @@ public class MovieFragment extends Fragment
     /**
      * biar bisa refresh dari activity
      */
-    public void refreshData() {
+    public void refreshMovie() {
         showLoading(true);
-        mPresenter.getMovies(1);
+        mPage = 1;
+        mPresenter.getMovies(mPage);
     }
 }

@@ -10,11 +10,9 @@ import android.view.MenuItem;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.medialink.submission3.model.MainViewModel;
 import com.medialink.submission3.view.MovieFragment;
 import com.medialink.submission3.view.adapter.PagerAdapter;
 
@@ -106,7 +104,7 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 101) {
             // setelah ganti bahasa, refresh lagi datanya
             Log.d(TAG, "onActivityResult: Ubah Setting Bahasa");
-            ((MovieFragment) getSupportFragmentManager().getFragments().get(0)).refreshData();
+            ((MovieFragment) getSupportFragmentManager().getFragments().get(0)).refreshMovie();
             //((TvFragment)    getSupportFragmentManager().getFragments().get(1)).addDataTv();
         }
     }

@@ -40,8 +40,7 @@ public class MoviePresenter implements MovieContract.PresenterInterface {
                     if (response.body() != null) {
                         ArrayList<MovieItem> list = new ArrayList<>();
                         list.addAll(response.body().getResults());
-                        mView.refreshData(list);
-
+                        mView.setMovie(list);
                         Log.d(TAG, "onResponse: "+list.size());
                     }
                 } else {
