@@ -6,16 +6,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.ContentObserver;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.HandlerThread;
 import android.view.View;
 import android.widget.ProgressBar;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.android.material.snackbar.Snackbar;
 import com.medialink.mynotesapp.adapter.NoteAdapter;
+import com.medialink.mynotesapp.db.DatabaseContract;
 import com.medialink.mynotesapp.db.NoteHelper;
 import com.medialink.mynotesapp.helper.MappingHelper;
 import com.medialink.mynotesapp.model.Note;
@@ -30,7 +35,7 @@ public class MainActivity extends AppCompatActivity
     private RecyclerView rvNotes;
     private NoteAdapter adapter;
     private FloatingActionButton fabAdd;
-    private NoteHelper noteHelper;
+
     private static final String EXTRA_STATE = "EXTRA_STATE";
 
     @Override
@@ -58,13 +63,20 @@ public class MainActivity extends AppCompatActivity
             }
         });
 
-        noteHelper = NoteHelper.getInstance(getApplicationContext());
-        noteHelper.open();
+        // tambahan
+        HandlerThread handlerThread = new HandlerThread("DataObserver");
+        handlerThread.start();
+        Handler handler = new Handler(handlerThread.getLooper());
+
+        DataObserver myObserver = new DataObserver(handler, this);
+        getContentResolver().registerContentObserver(DatabaseContract.NoteColumns.CONTENT_URI,
+                true, myObserver);
+
 
         // proses ambil data
         if (savedInstanceState == null) {
             // proses ambil data
-            new LoadNotesAsync(noteHelper, this).execute();
+            new LoadNotesAsync(this, this).execute();
         } else {
             ArrayList<Note> list = savedInstanceState.getParcelableArrayList(EXTRA_STATE);
             if (list != null) {
@@ -82,7 +94,6 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        noteHelper.close();
     }
 
     @Override
@@ -142,13 +153,26 @@ public class MainActivity extends AppCompatActivity
         }
     }
 
+    public static class DataObserver extends ContentObserver {
+        final Context context;
+        public DataObserver(Handler handler, Context context) {
+            super(handler);
+            this.context = context;
+        }
+        @Override
+        public void onChange(boolean selfChange) {
+            super.onChange(selfChange);
+            new LoadNotesAsync(context, (LoadNotesCallback) context).execute();
+        }
+    }
+
     private static class LoadNotesAsync extends AsyncTask<Void, Void, ArrayList<Note>> {
 
-        private final WeakReference<NoteHelper> weakNoteHelper;
+        private final WeakReference<Context> weakContext;
         private final WeakReference<LoadNotesCallback> weakCallback;
 
-        public LoadNotesAsync(NoteHelper noteHelper, LoadNotesCallback callback) {
-            this.weakNoteHelper = new WeakReference<>(noteHelper);
+        public LoadNotesAsync(Context context, LoadNotesCallback callback) {
+            weakContext = new WeakReference<>(context);
             this.weakCallback = new WeakReference<>(callback);
         }
 
@@ -160,7 +184,9 @@ public class MainActivity extends AppCompatActivity
 
         @Override
         protected ArrayList<Note> doInBackground(Void... voids) {
-            Cursor dataCursor = weakNoteHelper.get().queryAll();
+            Context context = weakContext.get();
+            Cursor dataCursor = context.getContentResolver().query(DatabaseContract.NoteColumns.CONTENT_URI,
+                    null, null, null, null);
             return MappingHelper.mapCursorToArrayList(dataCursor);
         }
 

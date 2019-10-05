@@ -8,11 +8,11 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
 import static android.provider.BaseColumns._ID;
-import static com.medialink.mynotesapp.db.DatabaseContract.NoteColumns.TABLE_NOTE;
+import static com.medialink.mynotesapp.db.DatabaseContract.NoteColumns.TABLE_NAME;
 
 public class NoteHelper {
 
-    private static final String DATABASE_TABLE = TABLE_NOTE;
+    private static final String DATABASE_TABLE = TABLE_NAME;
     private static DatabaseHelper dataBaseHelper;
     private static NoteHelper INSTANCE;
     private static SQLiteDatabase database;

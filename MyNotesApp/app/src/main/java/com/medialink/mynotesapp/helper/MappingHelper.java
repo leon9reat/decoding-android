@@ -25,4 +25,13 @@ public class MappingHelper {
 
         return noteList;
     }
+
+    public static Note mapCursorToObject(Cursor notesCursor) {
+        notesCursor.moveToFirst();
+        int id = notesCursor.getInt(notesCursor.getColumnIndexOrThrow(_ID));
+        String title = notesCursor.getString(notesCursor.getColumnIndexOrThrow(TITLE));
+        String description = notesCursor.getString(notesCursor.getColumnIndexOrThrow(DESCRIPTION));
+        String date = notesCursor.getString(notesCursor.getColumnIndexOrThrow(DATE));
+        return new Note(id, title, description, date);
+    }
 }
