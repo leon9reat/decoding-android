@@ -1,6 +1,7 @@
 <resources>
-    <string name="app_name">Submission3</string>
+    <string name="app_name">Submission 4</string>
     <string name="app_title" translatable="false">The Movie DB</string>
+    <string name="favorite_title">Favorite</string>
     <string name="ubah_bahasa">Change Language</string>
     <string name="tab_title_movie">Movie</string>
     <string name="tab_title_tv">TV Show</string>
@@ -30,4 +31,8 @@
     <string name="jam">hr</string>
     <string name="menit">min</string>
     <string name="label_first_air">First Airing</string>
+    <string name="label_show_favorite">Show Favorite</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment" translatable="false">Hello blank fragment</string>
 </resources>

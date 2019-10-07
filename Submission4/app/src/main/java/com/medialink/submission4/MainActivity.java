@@ -13,6 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.medialink.submission4.view.FavoriteActivity;
 import com.medialink.submission4.view.MovieFragment;
 import com.medialink.submission4.view.TvFragment;
 import com.medialink.submission4.view.adapter.PagerAdapter;
@@ -94,6 +95,10 @@ public class MainActivity extends AppCompatActivity {
             case R.id.action_change_locale:
                 Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
                 startActivityForResult(intent, 101);
+                return true;
+            case R.id.action_show_favorite:
+                Intent intentFavorite = new Intent(MainActivity.this, FavoriteActivity.class);
+                startActivity(intentFavorite);
                 return true;
         }
         return super.onOptionsItemSelected(item);

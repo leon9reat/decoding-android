@@ -1,5 +1,6 @@
 package com.medialink.submission4.view;
 
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -19,9 +20,12 @@ import com.medialink.submission4.BuildConfig;
 import com.medialink.submission4.Const;
 import com.medialink.submission4.DetailContract;
 import com.medialink.submission4.R;
+import com.medialink.submission4.database.FavoriteHelper;
+import com.medialink.submission4.model.FavoriteItem;
 import com.medialink.submission4.model.MainViewModel;
 import com.medialink.submission4.model.movie.MovieCastItem;
 import com.medialink.submission4.model.movie.MovieDetailRespon;
+import com.medialink.submission4.model.movie.MovieItem;
 import com.medialink.submission4.model.tv.TvCastItem;
 import com.medialink.submission4.model.tv.TvDetailRespon;
 import com.medialink.submission4.presenter.DetailPresenter;
@@ -30,9 +34,12 @@ import java.util.ArrayList;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
 public class DetailActivity extends AppCompatActivity
         implements DetailContract.ViewInterface {
+
+    private static final String TAG = DetailActivity.class.getSimpleName();
 
     @BindView(R.id.tv_title_label)
     TextView tvTitleLabel;
@@ -95,6 +102,8 @@ public class DetailActivity extends AppCompatActivity
 
     private MainViewModel mModel;
     private DetailPresenter mPresenter;
+    private MovieDetailRespon movieItem;
+    private TvDetailRespon tvItem;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +127,9 @@ public class DetailActivity extends AppCompatActivity
 
             mPresenter.getMovieDetail(id);
             mPresenter.getMovieCredit(id);
+
+            // favorite button
+            mPresenter.checkFavorite(getApplicationContext(), id, Const.MOVIE_TYPE);
         } else {
             // tv show
             mModel.getTvDetail().observe(this, getTvDetail);
@@ -129,10 +141,27 @@ public class DetailActivity extends AppCompatActivity
 
     }
 
+
+    @OnClick(R.id.btn_favorite)
+    void onClick(Button view) {
+        mPresenter.changeStateFavoriteMovie(getApplicationContext(), movieItem );
+
+        //boolean isFav = (boolean) btnFavorite.getTag();
+        //setButtonFavoriteColor(!isFav);
+
+        //if (isFav) {
+            // jika favorite, delete data
+        //    return;
+        //}
+
+
+    }
+
     private Observer<MovieDetailRespon> getMovieDetail = new Observer<MovieDetailRespon>() {
         @Override
         public void onChanged(MovieDetailRespon movieDetailRespon) {
             setMovieView(movieDetailRespon);
+            movieItem = movieDetailRespon;
         }
     };
 
@@ -147,6 +176,7 @@ public class DetailActivity extends AppCompatActivity
         @Override
         public void onChanged(TvDetailRespon tvDetailRespon) {
             setTvView(tvDetailRespon);
+            tvItem = tvDetailRespon;
         }
     };
 
@@ -225,6 +255,19 @@ public class DetailActivity extends AppCompatActivity
         } else {
             detailProgress.setVisibility(View.GONE);
         }
+    }
+
+    @Override
+    public void setButtonFavoriteColor(boolean isFavorite) {
+        Drawable img = getResources().getDrawable( R.drawable.ic_favorite_black_24dp);
+        btnFavorite.setTag(isFavorite);
+        img.setBounds( 0, 0, 32, 32 );
+        if (isFavorite) {
+            img.setTint(getResources().getColor(android.R.color.holo_red_dark));
+        } else {
+            img.setTint(getResources().getColor(android.R.color.black));
+        }
+        btnFavorite.setCompoundDrawables( img, null, null, null );
     }
 
     private void setMovieView(MovieDetailRespon movie) {

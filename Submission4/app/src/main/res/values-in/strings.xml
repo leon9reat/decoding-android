@@ -26,4 +26,6 @@
     <string name="tab_title_movie">Film</string>
     <string name="tab_title_tv">Acara TV</string>
     <string name="ubah_bahasa">Ganti Bahasa</string>
+    <string name="favorite_title">Kesukaan</string>
+    <string name="label_show_favorite">Lihat Kesukaan</string>
 </resources>
