@@ -1,0 +1,33 @@
+<resources>
+    <string name="app_name">Submission3</string>
+    <string name="app_title" translatable="false">The Movie DB</string>
+    <string name="ubah_bahasa">Change Language</string>
+    <string name="tab_title_movie">Movie</string>
+    <string name="tab_title_tv">TV Show</string>
+    <string name="example_title" translatable="false"><![CDATA[The Old Man & the Gun]]></string>
+    <string name="example_release_date" translatable="false">Released Date: 2018-09-28</string>
+    <string name="example_description" translatable="false">The true story of Forrest Tucker, from his audacious escape from San Quentin at the age of 70 to an unprecedented string of heists that confounded authorities and enchanted the public. Wrapped up in the pursuit are a detective, who becomes captivated with Forrest’s commitment to his craft, and a woman, who loves him in spite of his chosen profession.</string>
+    <string name="content_cover_image">Cover Image</string>
+
+    <string name="content_img_cast1">First Cast</string>
+    <string name="content_cast3">Third Cast</string>
+    <string name="content_img_cast2">Second Cast</string>
+    <string name="content_img_cast4">Fourth Cast</string>
+    <string name="content_img_cast5">Fifth Cast</string>
+    <string name="header_cast">Cast</string>
+    <string name="header_overview">Overview</string>
+    <string name="header_title">Movie Title</string>
+    <string name="content_img_cover">Movie Cover</string>
+    <string name="label_status">Status</string>
+    <string name="label_release_date">Release Date</string>
+    <string name="label_release_date_tv">First Airing</string>
+    <string name="label_genre">Genre</string>
+    <string name="label_runtime_movie">Runtime</string>
+    <string name="label_runtime_tv">Season / Episode</string>
+    <string name="label_score">User Score</string>
+    <string name="label_favorite">Favorite</string>
+    <string name="label_rate">Rate It</string>
+    <string name="jam">hr</string>
+    <string name="menit">min</string>
+    <string name="label_first_air">First Airing</string>
+</resources>

@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <ImageView
+        android:id="@+id/img_cast1"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:contentDescription="@string/content_img_cast1"
+        app:layout_constraintEnd_toStartOf="@+id/img_cast2"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/img_cast3"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <ImageView
+        android:id="@+id/img_cast3"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:layout_marginTop="8dp"
+        android:contentDescription="@string/content_cast3"
+        app:layout_constraintEnd_toStartOf="@+id/img_cast4"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_cast2"
+        app:layout_constraintTop_toBottomOf="@+id/tv_cast_label"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <ImageView
+        android:id="@+id/img_cast5"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:contentDescription="@string/content_img_cast5"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_cast4"
+        app:layout_constraintTop_toTopOf="@+id/img_cast3"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <ImageView
+        android:id="@+id/img_cast4"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:contentDescription="@string/content_img_cast4"
+        app:layout_constraintEnd_toStartOf="@+id/img_cast5"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_cast3"
+        app:layout_constraintTop_toTopOf="@+id/img_cast3"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <ImageView
+        android:id="@+id/img_cast2"
+        android:layout_width="55dp"
+        android:layout_height="55dp"
+        android:contentDescription="@string/content_img_cast2"
+        app:layout_constraintEnd_toStartOf="@+id/img_cast3"
+        app:layout_constraintHorizontal_bias="0.5"
+        app:layout_constraintStart_toEndOf="@+id/img_cast1"
+        app:layout_constraintTop_toTopOf="@+id/img_cast3"
+        tools:srcCompat="@tools:sample/avatars[0]" />
+
+    <TextView
+        android:id="@+id/tv_cast1"
+        style="@style/label_cast"
+        app:layout_constraintEnd_toEndOf="@+id/img_cast1"
+        app:layout_constraintStart_toStartOf="@+id/img_cast1"
+        app:layout_constraintTop_toBottomOf="@+id/img_cast1"
+        tools:text="Jake Pentecost" />
+
+    <TextView
+        android:id="@+id/tv_cast2"
+        style="@style/label_cast"
+        app:layout_constraintEnd_toEndOf="@+id/img_cast2"
+        app:layout_constraintStart_toStartOf="@+id/img_cast2"
+        app:layout_constraintTop_toBottomOf="@+id/img_cast2"
+        tools:text="Nate Lambert" />
+
+    <TextView
+        style="@style/label_cast"
+        android:id="@+id/tv_cast3"
+        app:layout_constraintEnd_toEndOf="@+id/img_cast3"
+        app:layout_constraintStart_toStartOf="@+id/img_cast3"
+        app:layout_constraintTop_toBottomOf="@+id/img_cast3"
+        tools:text="Amara Namani" />
+
+    <TextView
+        style="@style/label_cast"
+        android:id="@+id/tv_cast4"
+        app:layout_constraintEnd_toEndOf="@+id/img_cast4"
+        app:layout_constraintStart_toStartOf="@+id/img_cast4"
+        app:layout_constraintTop_toBottomOf="@+id/img_cast4"
+        tools:text="Liwen Shao" />
+
+    <TextView
+        android:id="@+id/tv_cast5"
+        style="@style/label_cast"
+        app:layout_constraintEnd_toEndOf="@+id/img_cast5"
+        app:layout_constraintStart_toStartOf="@+id/img_cast5"
+        app:layout_constraintTop_toBottomOf="@+id/img_cast5"
+        tools:text="Mako Mori" />
+
+    <TextView
+        android:id="@+id/tv_cast_label"
+        style="@style/header_main"
+        android:text="@string/header_cast"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Submission3</string>
+    <string name="content_cast3">Pemain Tiga</string>
+    <string name="content_cover_image">Poster</string>
+    <string name="content_img_cast1">Pemain Satu</string>
+    <string name="content_img_cast2">Pemain Dua</string>
+    <string name="content_img_cast4">Pemain Empat</string>
+    <string name="content_img_cast5">Pemain Lima</string>
+    <string name="content_img_cover">Poster Film</string>
+    <string name="header_cast">Pemain</string>
+    <string name="header_overview">Gambaran</string>
+    <string name="header_title">Judul Film</string>
+    <string name="jam">Jam</string>
+    <string name="label_favorite">Kesukaan</string>
+    <string name="label_first_air">Pertama Tayang</string>
+    <string name="label_genre">Jenis</string>
+    <string name="label_rate">Beri Nilai</string>
+    <string name="label_release_date">Tanggal Tayang</string>
+    <string name="label_release_date_tv">Pertama Tayang</string>
+    <string name="label_runtime_movie">Lama</string>
+    <string name="label_runtime_tv">Musim / Episod</string>
+    <string name="label_score">Nilai Pengguna</string>
+    <string name="label_status">Status</string>
+    <string name="menit">Menit</string>
+    <string name="tab_title_movie">Film</string>
+    <string name="tab_title_tv">Acara TV</string>
+    <string name="ubah_bahasa">Ganti Bahasa</string>
+</resources>
