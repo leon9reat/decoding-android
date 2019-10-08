@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/favorite_tv_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".view.TvFavoriteFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <ProgressBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/favorite_progress_tv"
+        android:layout_gravity="center"
+        style="@android:style/Widget.Material.Light.ProgressBar.Large" />
 
-</FrameLayout>
+    <androidx.recyclerview.widget.RecyclerView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/favorite_rv_tv"
+        tools:listitem="@layout/item_favorite"
+        tools:itemCount="2"
+        android:layout_gravity="top" />
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

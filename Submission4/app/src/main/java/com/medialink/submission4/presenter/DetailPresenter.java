@@ -2,7 +2,6 @@ package com.medialink.submission4.presenter;
 
 import android.content.ContentValues;
 import android.content.Context;
-import android.content.Intent;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -20,7 +19,6 @@ import com.medialink.submission4.model.RetrofitClient;
 import com.medialink.submission4.model.movie.MovieCastItem;
 import com.medialink.submission4.model.movie.MovieCreditRespon;
 import com.medialink.submission4.model.movie.MovieDetailRespon;
-import com.medialink.submission4.model.movie.MovieItem;
 import com.medialink.submission4.model.tv.TvCastItem;
 import com.medialink.submission4.model.tv.TvCreditRespon;
 import com.medialink.submission4.model.tv.TvDetailRespon;
@@ -190,15 +188,19 @@ public class DetailPresenter implements DetailContract.PresenterInterface {
     @Override
     public void checkFavorite(Context context, int movieId, int typeId) {
         // favorite button
-        FavoriteHelper favHelper = new FavoriteHelper(context);
+        FavoriteHelper favHelper = FavoriteHelper.getInstance(context);
+        favHelper.open();
         FavoriteItem item = favHelper.getFav(movieId, typeId);
+
         if (item == null) {
             mViewInterface.setButtonFavoriteColor(false);
         } else {
             mViewInterface.setButtonFavoriteColor(true);
         }
+
     }
 
+    @Override
     public void changeStateFavoriteMovie(Context context, final MovieDetailRespon movie) {
         FavoriteHelper favHelper = FavoriteHelper.getInstance(context);
         favHelper.open();
@@ -225,6 +227,43 @@ public class DetailPresenter implements DetailContract.PresenterInterface {
         values.put(DatabaseContract.tableFavorite.POSTER_PATH, movie.getPosterPath());
         values.put(DatabaseContract.tableFavorite.OVERVIEW, movie.getOverview());
         values.put(DatabaseContract.tableFavorite.RELEASE_DATE, movie.getReleaseDate());
+        long result = favHelper.insert(values);
+        if (result > 0) {
+            mViewInterface.setButtonFavoriteColor(true);
+        } else {
+            Toast.makeText(context, "Gagal menambah data", Toast.LENGTH_SHORT).show();
+        }
+
+        favHelper.close();
+    }
+
+    @Override
+    public void changeStateFavoriteTv(Context context, TvDetailRespon tv) {
+        FavoriteHelper favHelper = FavoriteHelper.getInstance(context);
+        favHelper.open();
+
+        FavoriteItem item = favHelper.getFav(tv.getId(), Const.TV_TYPE);
+        if (item != null) {
+            // delete
+            long result = favHelper.deleteById(String.valueOf(item.getId()));
+            if (result > 0) {
+                mViewInterface.setButtonFavoriteColor(false);
+            } else {
+                Toast.makeText(context, "Gagal menghapus data", Toast.LENGTH_SHORT).show();
+            }
+
+            return;
+        }
+
+        // insert
+        Log.d(TAG, "onClick: "+tv.getId());
+        ContentValues values = new ContentValues();
+        values.put(DatabaseContract.tableFavorite.MOVIE_ID, tv.getId());
+        values.put(DatabaseContract.tableFavorite.TYPE_ID, Const.TV_TYPE);
+        values.put(DatabaseContract.tableFavorite.TITLE, tv.getName());
+        values.put(DatabaseContract.tableFavorite.POSTER_PATH, tv.getPosterPath());
+        values.put(DatabaseContract.tableFavorite.OVERVIEW, tv.getOverview());
+        values.put(DatabaseContract.tableFavorite.RELEASE_DATE, tv.getFirstAirDate());
         long result = favHelper.insert(values);
         if (result > 0) {
             mViewInterface.setButtonFavoriteColor(true);

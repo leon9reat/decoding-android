@@ -38,8 +38,7 @@ public class MoviePresenter implements MovieContract.PresenterInterface {
             public void onResponse(Call<MovieRespon> call, Response<MovieRespon> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        ArrayList<MovieItem> list = new ArrayList<>();
-                        list.addAll(response.body().getResults());
+                        ArrayList<MovieItem> list = new ArrayList<>(response.body().getResults());
                         mView.setMovie(list);
                         Log.d(TAG, "onResponse: "+list.size());
                     }

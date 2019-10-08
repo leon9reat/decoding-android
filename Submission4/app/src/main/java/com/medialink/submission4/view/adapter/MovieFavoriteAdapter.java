@@ -1,7 +1,6 @@
 package com.medialink.submission4.view.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -14,7 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.medialink.submission4.BuildConfig;
-import com.medialink.submission4.FavoriteContract;
+import com.medialink.submission4.FavoriteMovieContract;
 import com.medialink.submission4.R;
 import com.medialink.submission4.model.FavoriteItem;
 
@@ -28,9 +27,9 @@ public class MovieFavoriteAdapter extends RecyclerView.Adapter<MovieFavoriteAdap
     private static final String TAG = "MovieFavoriteAdapter";
     private ArrayList<FavoriteItem> listFavorite = new ArrayList<>();
     private Context mContext;
-    private FavoriteContract.ViewInterface mView;
+    private FavoriteMovieContract.ViewInterface mView;
 
-    public MovieFavoriteAdapter(Context context, FavoriteContract.ViewInterface viewInterface) {
+    public MovieFavoriteAdapter(Context context, FavoriteMovieContract.ViewInterface viewInterface) {
         this.mContext = context;
         this.mView = viewInterface;
     }
@@ -88,7 +87,7 @@ public class MovieFavoriteAdapter extends RecyclerView.Adapter<MovieFavoriteAdap
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mView.itemClick(item, position);
+                mView.itemFavoriteClick(item, position);
             }
         });
         holder.btnFavDelete.setOnClickListener(new View.OnClickListener() {
@@ -97,8 +96,6 @@ public class MovieFavoriteAdapter extends RecyclerView.Adapter<MovieFavoriteAdap
                 mView.itemDelete(String.valueOf(item.getId()), position);
             }
         });
-
-
     }
 
     @Override

@@ -82,8 +82,7 @@ public class FavoriteHelper {
     }
 
     public FavoriteItem getFav(int id, int typeId) {
-        SQLiteDatabase db = databaseHelper.getReadableDatabase();
-        Cursor cursor = db.query(TABLE,
+        Cursor cursor = database.query(TABLE,
                 null,
                 DatabaseContract.tableFavorite.MOVIE_ID + " = ? AND "
                         +DatabaseContract.tableFavorite.TYPE_ID + " = ?",

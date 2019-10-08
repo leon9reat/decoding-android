@@ -1,14 +1,17 @@
 package com.medialink.submission4.view;
 
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.constraintlayout.widget.Guideline;
 import androidx.lifecycle.Observer;
@@ -20,12 +23,9 @@ import com.medialink.submission4.BuildConfig;
 import com.medialink.submission4.Const;
 import com.medialink.submission4.DetailContract;
 import com.medialink.submission4.R;
-import com.medialink.submission4.database.FavoriteHelper;
-import com.medialink.submission4.model.FavoriteItem;
 import com.medialink.submission4.model.MainViewModel;
 import com.medialink.submission4.model.movie.MovieCastItem;
 import com.medialink.submission4.model.movie.MovieDetailRespon;
-import com.medialink.submission4.model.movie.MovieItem;
 import com.medialink.submission4.model.tv.TvCastItem;
 import com.medialink.submission4.model.tv.TvDetailRespon;
 import com.medialink.submission4.presenter.DetailPresenter;
@@ -104,6 +104,9 @@ public class DetailActivity extends AppCompatActivity
     private DetailPresenter mPresenter;
     private MovieDetailRespon movieItem;
     private TvDetailRespon tvItem;
+    private int typeId;
+    private int position;
+    private boolean isDelete = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -113,14 +116,14 @@ public class DetailActivity extends AppCompatActivity
 
         mModel = ViewModelProviders.of(this).get(MainViewModel.class);
 
-
         mPresenter = new DetailPresenter(this, this);
 
-
         int id = getIntent().getIntExtra(Const.KEY_ID, 0);
-        int type = getIntent().getIntExtra(Const.KEY_TYPE, 0);
+        typeId = getIntent().getIntExtra(Const.KEY_TYPE, 0);
+        position = getIntent().getIntExtra("POSITION", 0);
 
-        if (type == Const.INTENT_MOVIE) {
+        String title;
+        if (typeId == Const.INTENT_MOVIE) {
             // movie
             mModel.getMovieDetail().observe(this, getMovieDetail);
             mModel.getMovieCast().observe(this, getMovieCast);
@@ -130,6 +133,8 @@ public class DetailActivity extends AppCompatActivity
 
             // favorite button
             mPresenter.checkFavorite(getApplicationContext(), id, Const.MOVIE_TYPE);
+
+            title = getString(R.string.detail_movie_title);
         } else {
             // tv show
             mModel.getTvDetail().observe(this, getTvDetail);
@@ -137,6 +142,15 @@ public class DetailActivity extends AppCompatActivity
 
             mPresenter.getTvDetail(id);
             mPresenter.getTvCredit(id);
+
+            mPresenter.checkFavorite(getApplicationContext(), id, Const.TV_TYPE);
+
+            title = getString(R.string.detail_tv_title);
+        }
+
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setTitle(title);
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
 
     }
@@ -144,7 +158,12 @@ public class DetailActivity extends AppCompatActivity
 
     @OnClick(R.id.btn_favorite)
     void onClick(Button view) {
-        mPresenter.changeStateFavoriteMovie(getApplicationContext(), movieItem );
+        if (typeId == Const.INTENT_MOVIE) {
+            // movieItem didapat pada prosedur observer
+            mPresenter.changeStateFavoriteMovie(getApplicationContext(), movieItem);
+        } else {
+            mPresenter.changeStateFavoriteTv(getApplicationContext(), tvItem);
+        }
 
         //boolean isFav = (boolean) btnFavorite.getTag();
         //setButtonFavoriteColor(!isFav);
@@ -155,6 +174,19 @@ public class DetailActivity extends AppCompatActivity
         //}
 
 
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        int id = item.getItemId();
+        if (id == android.R.id.home) {
+            Intent intent = new Intent();
+            intent.putExtra("POSITION", position);
+            setResult(1031, intent);
+
+            finish();
+        }
+        return super.onOptionsItemSelected(item);
     }
 
     private Observer<MovieDetailRespon> getMovieDetail = new Observer<MovieDetailRespon>() {
@@ -264,8 +296,10 @@ public class DetailActivity extends AppCompatActivity
         img.setBounds( 0, 0, 32, 32 );
         if (isFavorite) {
             img.setTint(getResources().getColor(android.R.color.holo_red_dark));
+            isDelete = false;
         } else {
             img.setTint(getResources().getColor(android.R.color.black));
+            isDelete = true;
         }
         btnFavorite.setCompoundDrawables( img, null, null, null );
     }

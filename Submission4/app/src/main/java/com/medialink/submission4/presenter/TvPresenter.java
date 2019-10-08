@@ -46,8 +46,7 @@ public class TvPresenter implements TvContract.PresenterInterface {
             public void onResponse(Call<TvResponse> call, Response<TvResponse> response) {
                 if (response.isSuccessful()) {
                     if (response.body() != null) {
-                        ArrayList<TvItem> list = new ArrayList<>();
-                        list.addAll(response.body().getResults());
+                        ArrayList<TvItem> list = new ArrayList<>(response.body().getResults());
                         mModel.postListMovie(list);
                         mView.showLoading(false);
 

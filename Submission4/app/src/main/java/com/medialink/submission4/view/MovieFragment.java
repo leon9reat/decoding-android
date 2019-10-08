@@ -124,7 +124,7 @@ public class MovieFragment extends Fragment
         i.putExtra(Const.KEY_ID, movie.getId());
         i.putExtra(Const.KEY_TYPE, Const.INTENT_MOVIE);
         startActivity(i);
-        Log.d(TAG, "itemClick: " + movie.getTitle());
+        Log.d(TAG, "itemFavoriteClick: " + movie.getTitle());
     }
 
     @Override

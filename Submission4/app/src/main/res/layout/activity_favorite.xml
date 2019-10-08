@@ -15,7 +15,7 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        android:maxWidth="0dp"
+        app:tabMaxWidth="0dp"
         app:tabInlineLabel="true"
         app:tabTextColor="@color/white"
         app:tabIconTint="@color/white" />

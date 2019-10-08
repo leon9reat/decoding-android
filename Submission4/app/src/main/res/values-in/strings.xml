@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Submission3</string>
     <string name="content_cast3">Pemain Tiga</string>
     <string name="content_cover_image">Poster</string>
     <string name="content_img_cast1">Pemain Satu</string>
@@ -28,4 +27,6 @@
     <string name="ubah_bahasa">Ganti Bahasa</string>
     <string name="favorite_title">Kesukaan</string>
     <string name="label_show_favorite">Lihat Kesukaan</string>
+    <string name="detail_tv_title">Detail Acara TV</string>
+    <string name="detail_movie_title">Detail Film</string>
 </resources>

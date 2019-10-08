@@ -108,7 +108,7 @@ public class TvFragment extends Fragment implements TvContract.ViewInterface {
         i.putExtra(Const.KEY_ID, tv.getId());
         i.putExtra(Const.KEY_TYPE, Const.INTENT_TV);
         startActivity(i);
-        Log.d(TAG, "itemClick: " + tv.getName());
+        Log.d(TAG, "itemFavoriteClick: " + tv.getName());
     }
 
     @Override

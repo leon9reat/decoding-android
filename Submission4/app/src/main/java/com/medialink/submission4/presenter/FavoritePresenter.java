@@ -4,19 +4,27 @@ import android.content.ContentValues;
 import android.content.Context;
 
 import com.medialink.submission4.Const;
-import com.medialink.submission4.FavoriteContract;
+import com.medialink.submission4.FavoriteMovieContract;
+import com.medialink.submission4.FavoriteTvContract;
 import com.medialink.submission4.database.DatabaseContract;
 import com.medialink.submission4.database.FavoriteHelper;
 import com.medialink.submission4.model.FavoriteItem;
 import com.medialink.submission4.model.movie.MovieItem;
 
-public class FavoritePresenter implements FavoriteContract.PresenterInterface {
+public class FavoritePresenter
+        implements FavoriteMovieContract.PresenterInterface {
 
-    private FavoriteContract.ViewInterface mViewInterface;
+    private FavoriteMovieContract.ViewInterface mViewInterface;
+    private FavoriteTvContract.ViewInterface mViewTvInface;
     private Context context;
 
-    public FavoritePresenter(FavoriteContract.ViewInterface mViewInterface, Context context) {
+    public FavoritePresenter(FavoriteMovieContract.ViewInterface mViewInterface, Context context) {
         this.mViewInterface = mViewInterface;
+        this.context = context;
+    }
+
+    public FavoritePresenter(FavoriteTvContract.ViewInterface mViewTvIntface, Context context) {
+        this.mViewTvInface = mViewTvIntface;
         this.context = context;
     }
 
@@ -47,21 +55,17 @@ public class FavoritePresenter implements FavoriteContract.PresenterInterface {
 
         if (isEdit) {
             long result = favHelper.update(id, values);
-            if (result > 0) {
-                //setResult(RESULT_UPDATE, intent);
-                //finish();
-            } else {
-                //Toast.makeText(NoteAddUpdateActivity.this, "Gagal mengupdate data", Toast.LENGTH_SHORT).show();
-            }
+            //setResult(RESULT_UPDATE, intent);
+            //finish();
+            //Toast.makeText(NoteAddUpdateActivity.this, "Gagal mengupdate data", Toast.LENGTH_SHORT).show();
         } else {
             long result = favHelper.insert(values);
             if (result > 0) {
                 fav.setId((int) result);
                 //setResult(RESULT_ADD, intent);
                 //finish();
-            } else {
-                //Toast.makeText(NoteAddUpdateActivity.this, "Gagal menambah data", Toast.LENGTH_SHORT).show();
-            }
+            }  //Toast.makeText(NoteAddUpdateActivity.this, "Gagal menambah data", Toast.LENGTH_SHORT).show();
+
         }
 
         favHelper.close();
@@ -69,14 +73,24 @@ public class FavoritePresenter implements FavoriteContract.PresenterInterface {
 
     @Override
     public void itemDelete(String id, int position) {
-        FavoriteItem fav = new FavoriteItem();
         FavoriteHelper favHelper = FavoriteHelper.getInstance(context);
+        favHelper.open();
 
         long result = favHelper.deleteById(id);
         if (result > 0) {
-            mViewInterface.refreshRemoveItem(position);
+            if (mViewTvInface != null) {
+                mViewTvInface.refreshRemoveItem(position);
+            } else {
+                mViewInterface.refreshRemoveItem(position);
+            }
+
         } else {
-           mViewInterface.setError("Gagal Hapus Favorite");
+            if (mViewTvInface != null) {
+                mViewTvInface.setError("Gagal Hapus Favorite");
+            } else {
+                mViewInterface.setError("Gagal Hapus Favorite");
+            }
+
         }
 
         favHelper.close();

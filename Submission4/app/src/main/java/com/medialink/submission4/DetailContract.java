@@ -1,9 +1,9 @@
 package com.medialink.submission4;
 
 import android.content.Context;
-import android.widget.Button;
 
 import com.medialink.submission4.model.movie.MovieDetailRespon;
+import com.medialink.submission4.model.tv.TvDetailRespon;
 
 public interface DetailContract {
 
@@ -21,5 +21,7 @@ public interface DetailContract {
         void getTvDetail(int id);
         void getTvCredit(int id);
         void checkFavorite(Context context, int id, int typeId);
+        void changeStateFavoriteMovie(Context context, final MovieDetailRespon movie);
+        void changeStateFavoriteTv(Context context, final TvDetailRespon tv);
     }
 }

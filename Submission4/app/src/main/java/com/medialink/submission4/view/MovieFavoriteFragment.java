@@ -14,6 +14,7 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
@@ -23,15 +24,13 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.medialink.submission4.Const;
-import com.medialink.submission4.FavoriteContract;
-import com.medialink.submission4.FavoriteFragmentContract;
+import com.medialink.submission4.FavoriteMovieContract;
 import com.medialink.submission4.R;
 import com.medialink.submission4.database.FavoriteHelper;
 import com.medialink.submission4.helper.MappingHelper;
 import com.medialink.submission4.model.FavoriteItem;
 import com.medialink.submission4.model.movie.MovieItem;
 import com.medialink.submission4.presenter.FavoritePresenter;
-import com.medialink.submission4.presenter.MoviePresenter;
 import com.medialink.submission4.view.adapter.MovieFavoriteAdapter;
 
 import java.lang.ref.WeakReference;
@@ -45,23 +44,24 @@ import butterknife.Unbinder;
  * A simple {@link Fragment} subclass.
  */
 public class MovieFavoriteFragment extends Fragment
-        implements LoadFavoriteCallback, FavoriteContract.ViewInterface {
+        implements LoadMovieFavCallback, FavoriteMovieContract.ViewInterface {
 
 
-    Unbinder unbinder;
-
+    private Unbinder unbinder;
     private final static String TAG = MovieFavoriteFragment.class.getSimpleName();
+
     @BindView(R.id.progress_fav_movie)
     ProgressBar progressFavMovie;
     @BindView(R.id.rv_fav_movie)
     RecyclerView rvFavMovie;
     @BindView(R.id.movie_layout)
     CoordinatorLayout movieLayout;
-    private MovieFavoriteAdapter mAdapter;
+
     private FavoritePresenter mPresenter;
     private MovieFavoriteAdapter adapter;
     private FavoriteHelper favoriteHelper;
     private static final String EXTRA_STATE = "extra_state";
+
 
     public MovieFavoriteFragment() {
         // Required empty public constructor
@@ -95,6 +95,7 @@ public class MovieFavoriteFragment extends Fragment
             if (list != null) {
                 adapter.setFavItem(list);
             }
+            progressFavMovie.setVisibility(View.GONE);
         }
         return view;
     }
@@ -138,8 +139,26 @@ public class MovieFavoriteFragment extends Fragment
     }
 
     @Override
-    public void itemClick(FavoriteItem movie, int position) {
-        Log.d(TAG, "itemClick: "+movie.getTitle());
+    public void itemFavoriteClick(FavoriteItem movie, int position) {
+        Intent i = new Intent(getContext(), DetailActivity.class);
+        i.putExtra(Const.KEY_ID, movie.getMovie_id());
+        i.putExtra(Const.KEY_TYPE, Const.INTENT_MOVIE);
+        i.putExtra("POSITION", position);
+        startActivityForResult(i, 103);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (data != null) {
+            if (requestCode == 103) {
+                if (resultCode == 1031) {
+                    int position = data.getIntExtra("POSITION", 0);
+                    adapter.removeItem(position);
+                    showSnackbarMessage("Satu item berhasil dihapus");
+                }
+            }
+        }
     }
 
     @Override
@@ -192,9 +211,9 @@ public class MovieFavoriteFragment extends Fragment
     private static class LoadFavoriteAsync extends AsyncTask<Void, Void, ArrayList<FavoriteItem>> {
 
         private final WeakReference<FavoriteHelper> weakFavoriteHelper;
-        private final WeakReference<LoadFavoriteCallback> weakCallback;
+        private final WeakReference<LoadMovieFavCallback> weakCallback;
 
-        public LoadFavoriteAsync(FavoriteHelper favHelper, LoadFavoriteCallback callback) {
+        public LoadFavoriteAsync(FavoriteHelper favHelper, LoadMovieFavCallback callback) {
             this.weakFavoriteHelper = new WeakReference<>(favHelper);
             this.weakCallback = new WeakReference<>(callback);
         }
@@ -224,7 +243,7 @@ public class MovieFavoriteFragment extends Fragment
 
 }
 
-interface LoadFavoriteCallback {
+interface LoadMovieFavCallback {
     void preExecute();
 
     void postExecute(ArrayList<FavoriteItem> notes);
