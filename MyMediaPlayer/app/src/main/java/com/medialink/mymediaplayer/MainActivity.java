@@ -1,11 +1,19 @@
 package com.medialink.mymediaplayer;
 
+import android.content.ComponentName;
+import android.content.Intent;
+import android.content.ServiceConnection;
 import android.content.res.AssetFileDescriptor;
 import android.media.AudioAttributes;
 import android.media.AudioManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.IBinder;
+import android.os.Message;
+import android.os.Messenger;
+import android.os.RemoteException;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -20,6 +28,11 @@ public class MainActivity extends AppCompatActivity
     private boolean isReady;
     private Button btnPlay, btnStop;
 
+    private final String TAG = MainActivity.class.getSimpleName();
+    private Messenger mService = null;
+    private Intent mBoundServiceIntent;
+    private boolean mServiceBound = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -31,12 +44,31 @@ public class MainActivity extends AppCompatActivity
         btnPlay.setOnClickListener(this);
         btnStop.setOnClickListener(this);
 
-        initView();
+        mBoundServiceIntent = new Intent(MainActivity.this, MediaService.class);
+        mBoundServiceIntent.setAction(MediaService.ACTION_CREATE);
+        startService(mBoundServiceIntent);
+        bindService(mBoundServiceIntent, mServiceConnection, BIND_AUTO_CREATE);
+
     }
+
+    private ServiceConnection mServiceConnection = new ServiceConnection() {
+        @Override
+        public void onServiceDisconnected(ComponentName name) {
+            mService = null;
+            mServiceBound = false;
+        }
+        @Override
+        public void onServiceConnected(ComponentName name, IBinder service) {
+            mService = new Messenger(service);
+            mServiceBound = true;
+        }
+    };
+
+
 
     private void initView() {
         mPlayer = new MediaPlayer();
-        ;
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             AudioAttributes attributes = new AudioAttributes.Builder()
                     .setUsage(AudioAttributes.USAGE_MEDIA)
@@ -75,24 +107,32 @@ public class MainActivity extends AppCompatActivity
         int id = view.getId();
         switch (id) {
             case R.id.btn_play:
-                if (!isReady) {
-                    mPlayer.prepareAsync();
-                } else {
-                    if (mPlayer.isPlaying()) {
-                        mPlayer.pause();
-                    } else {
-                        mPlayer.start();
-                    }
+                if (!mServiceBound) return;
+                try {
+                    mService.send(Message.obtain(null, MediaService.PLAY, 0, 0));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
                 break;
             case R.id.btn_stop:
-                if (mPlayer.isPlaying() || isReady) {
-                    mPlayer.stop();
-                    isReady = false;
+                if (!mServiceBound) return;
+                try {
+                    mService.send(Message.obtain(null, MediaService.STOP, 0, 0));
+                } catch (RemoteException e) {
+                    e.printStackTrace();
                 }
                 break;
             default:
                 break;
         }
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Log.d(TAG, "onDestroy: ");
+        unbindService(mServiceConnection);
+        mBoundServiceIntent.setAction(MediaService.ACTION_DESTROY);
+        startService(mBoundServiceIntent);
     }
 }
