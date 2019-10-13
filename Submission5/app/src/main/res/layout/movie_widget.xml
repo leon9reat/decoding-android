@@ -1,0 +1,44 @@
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#09C"
+    android:padding="@dimen/widget_margin">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:weightSum="10">
+
+        <StackView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="9"
+            android:id="@+id/stack_view"
+            android:loopViews="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:id="@+id/tv_widget_title"
+            android:layout_weight="1"
+            android:text="@string/example_title"
+            android:gravity="center"
+            android:textColor="@color/colorPrimaryText"
+            android:background="@color/colorPrimary"
+            android:textSize="18sp" />
+    </LinearLayout>
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/tv_widget_empty"
+        android:gravity="center"
+        android:background="@color/colorPrimary"
+        android:textColor="@color/colorPrimaryText"
+        android:text="@string/label_no_data"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:visibility="gone" />
+
+</FrameLayout>

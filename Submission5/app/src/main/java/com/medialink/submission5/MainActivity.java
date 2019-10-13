@@ -1,17 +1,23 @@
 package com.medialink.submission5;
 
 import android.app.SearchManager;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.medialink.submission5.preference.PreferenceHelper;
+import com.medialink.submission5.preference.PreferenceActivity;
 import com.medialink.submission5.view.adapter.MainPagerAdapter;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
@@ -30,6 +36,14 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         initView();
+
+        PreferenceHelper pm = new PreferenceHelper(this);
+        if (pm.isRelesedReminder()) {
+            Toast.makeText(this, "released on", Toast.LENGTH_SHORT).show();
+        } else {
+            Toast.makeText(this, "released off", Toast.LENGTH_SHORT).show();
+        } 
+
     }
 
     private void initView() {
@@ -103,5 +117,18 @@ public class MainActivity extends AppCompatActivity {
             });
         }
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.menu_notif_setting:
+                Intent settingIntent = new Intent(this, PreferenceActivity.class);
+                startActivity(settingIntent);
+                break;
+            default:
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

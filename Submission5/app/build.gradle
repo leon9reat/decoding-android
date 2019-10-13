@@ -10,6 +10,9 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        buildConfigField("String", "BaseUrl", '"https://api.themoviedb.org/3/"')
+        buildConfigField("String", "ApiKey", '"65533e43224cd1a4e69fb25527b5735e"')
+        buildConfigField("String", "ImageUrl", '"https://image.tmdb.org/t/p/w185_and_h278_bestv2"')
     }
     buildTypes {
         release {
@@ -34,8 +37,13 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-scalars:2.6.2'
     implementation 'com.squareup.okhttp3:logging-interceptor:4.2.2'
 
-    implementation  "android.arch.persistence.room:runtime:1.1.1"
-    annotationProcessor  "android.arch.persistence.room:compiler:1.1.1"
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    annotationProcessor "android.arch.persistence.room:compiler:1.1.1"
+
+    implementation 'com.github.bumptech.glide:glide:4.10.0'
+    annotationProcessor 'com.github.bumptech.glide:compiler:4.10.0'
+
+    implementation 'androidx.preference:preference:1.1.0'
 
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'

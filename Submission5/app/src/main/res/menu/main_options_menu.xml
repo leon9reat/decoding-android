@@ -13,8 +13,14 @@
         android:icon="@drawable/ic_favorite_black_24dp"
         app:showAsAction="always" />
     <item
+        android:id="@+id/menu_notif_setting"
+        android:title="@string/label_setting_notif"
+        android:icon="@drawable/ic_settings_remote_black_24dp"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/menu_change_language"
         android:title="@string/label_change_language"
         android:icon="@drawable/ic_language_black_24dp"
         app:showAsAction="never" />
+
 </menu>

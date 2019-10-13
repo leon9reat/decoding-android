@@ -13,4 +13,15 @@
     <string name="label_change_language">Change Language</string>
     <string name="label_movie">Movie</string>
     <string name="label_tv">Tv Show</string>
+    <string name="appwidget_text">Widget Text</string>
+    <string name="add_widget">Add widget</string>
+    <string name="label_no_data">No Data</string>
+    <string name="label_setting_notif">Notification Settings</string>
+    <string name="pref_key_release_reminder">key_release_reminder</string>
+    <string name="pref_key_daily_reminder">key_daily_reminder</string>
+    <string name="setting_caption">Reminder Settings</string>
+    <string name="pref_release_summary">Reminder showing the movie that released today</string>
+    <string name="pref_release_title">Release Reminder</string>
+    <string name="pref_daily_title">Daily Reminder</string>
+    <string name="pref_daily_summary">Reminder to return to app</string>
 </resources>
