@@ -1,4 +1,4 @@
-package com.medialink.submission5.model;
+package com.medialink.submission5.model.movie;
 
 import com.google.gson.annotations.SerializedName;
 

@@ -3,37 +3,50 @@ package com.medialink.submission5;
 import android.app.SearchManager;
 import android.content.Intent;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
-import com.medialink.submission5.preference.PreferenceHelper;
+import com.medialink.submission5.contract.MainContract;
 import com.medialink.submission5.preference.PreferenceActivity;
+import com.medialink.submission5.preference.PreferenceHelper;
+import com.medialink.submission5.presenter.MainPresenter;
 import com.medialink.submission5.view.adapter.MainPagerAdapter;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity
+        implements MainContract.MainInterface {
 
     private static final String TAG = "MainActivity";
+    private static final String KEY_SEARCH_TEXT = "SEARCH_TEXT";
+    private String mSearchText;
+
     private SearchManager searchManager;
     private SearchView searchView;
     private TabLayout tabMain;
     private ViewPager pagerMain;
+    private MainContract.PresenterInterface mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        mPresenter = MainPresenter.getInstance();
+        mPresenter.setMainView(this);
 
         initView();
 
@@ -42,8 +55,18 @@ public class MainActivity extends AppCompatActivity {
             Toast.makeText(this, "released on", Toast.LENGTH_SHORT).show();
         } else {
             Toast.makeText(this, "released off", Toast.LENGTH_SHORT).show();
-        } 
+        }
 
+        if (savedInstanceState != null) {
+            mSearchText = savedInstanceState.getString(KEY_SEARCH_TEXT);
+        }
+
+    }
+
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putString(KEY_SEARCH_TEXT, mSearchText);
     }
 
     private void initView() {
@@ -82,7 +105,8 @@ public class MainActivity extends AppCompatActivity {
         // pager
         PagerAdapter adapter = new MainPagerAdapter(getSupportFragmentManager(),
                 BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT,
-                tabMain.getTabCount());
+                tabMain.getTabCount(),
+                mPresenter);
         pagerMain.setAdapter(adapter);
         pagerMain.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabMain));
     }
@@ -100,21 +124,55 @@ public class MainActivity extends AppCompatActivity {
             searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
                 @Override
                 public boolean onQueryTextSubmit(String query) {
+                    mSearchText = query;
+
                     int activeTab = tabMain.getSelectedTabPosition();
                     if (activeTab == 0) {
-                        Log.d(TAG, "cari movie: " + query);
-                    } else {
-                        Log.d(TAG, "cari tv: " + query);
-                    }
+                        if (query.isEmpty()) {
+                            mPresenter.getMovie(1);
+                        } else {
+                            mPresenter.getMovieFilter(mSearchText);
+                        }
 
+                    } else {
+                        if (query.isEmpty()) {
+                            mPresenter.getTv(1);
+                        } else {
+                            mPresenter.getTvFilter(mSearchText);
+                        }
+
+                    }
+                    Log.d(TAG, "Search Text : " + mSearchText);
                     return true;
                 }
 
                 @Override
                 public boolean onQueryTextChange(String newText) {
-                    return false;
+                    if (newText.isEmpty() && !searchView.isIconified()) {
+                        int activeTab = tabMain.getSelectedTabPosition();
+
+                        if (activeTab == 0) {
+                            mPresenter.getMovie(1);
+                        } else {
+                            mPresenter.getTv(1);
+                        }
+                        mSearchText = "";
+                        Log.d(TAG, "Reset Searching Text : " + mSearchText);
+                        return true;
+                    } else {
+                        return false;
+                    }
                 }
             });
+            searchView.setOnSearchClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    if (mSearchText != null) {
+                        searchView.setQuery(mSearchText, false);
+                    }
+                }
+            });
+
         }
         return super.onCreateOptionsMenu(menu);
     }
@@ -123,12 +181,57 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         switch (item.getItemId()) {
             case R.id.menu_notif_setting:
-                Intent settingIntent = new Intent(this, PreferenceActivity.class);
-                startActivity(settingIntent);
+                showSettings();
+                break;
+            case R.id.menu_favorite:
+                showFavorite();
+                break;
+            case R.id.menu_change_language:
+                changeLanguage();
                 break;
             default:
                 break;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void showSettings() {
+        Intent settingIntent = new Intent(this, PreferenceActivity.class);
+        startActivity(settingIntent);
+    }
+
+    @Override
+    public void showDetail(int detailType, int id) {
+        Intent intent = new Intent(this, DetailActivity.class);
+        Bundle args = new Bundle();
+        args.putInt(Const.KEY_DETAIL_TYPE, detailType);
+        args.putInt(Const.KEY_ID, id);
+        intent.putExtras(args);
+        startActivity(intent);
+    }
+
+    @Override
+    public void showFavorite() {
+        Intent intent = new Intent(this, FavoriteActivity.class);
+        startActivity(intent);
+    }
+
+    @Override
+    public void changeLanguage() {
+        Intent intent = new Intent(Settings.ACTION_LOCALE_SETTINGS);
+        startActivityForResult(intent, Const.CHANGE_LANGUAGE_REQUEST);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == Const.CHANGE_LANGUAGE_REQUEST) {
+            // setelah ganti bahasa, refresh lagi datanya
+            //((MovieFragment) getSupportFragmentManager().getFragments().get(0)).refreshMovie();
+            //((TvFragment)    getSupportFragmentManager().getFragments().get(1)).refreshTv();
+
+            Log.d(TAG, "onActivityResult: Ubah Setting Bahasa");
+        }
     }
 }

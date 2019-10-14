@@ -1,10 +1,14 @@
-package com.medialink.submission5.model;
+package com.medialink.submission5.model.movie;
+
+import android.os.Parcel;
+import android.os.Parcelable;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class MovieResult {
+public class MovieResult implements Parcelable {
 
 	@SerializedName("overview")
 	private String overview;
@@ -159,4 +163,61 @@ public class MovieResult {
 	public int getVoteCount(){
 		return voteCount;
 	}
+
+
+	@Override
+	public int describeContents() {
+		return 0;
+	}
+
+	@Override
+	public void writeToParcel(Parcel dest, int flags) {
+		dest.writeString(this.overview);
+		dest.writeString(this.originalLanguage);
+		dest.writeString(this.originalTitle);
+		dest.writeByte(this.video ? (byte) 1 : (byte) 0);
+		dest.writeString(this.title);
+		dest.writeList(this.genreIds);
+		dest.writeString(this.posterPath);
+		dest.writeString(this.backdropPath);
+		dest.writeString(this.releaseDate);
+		dest.writeDouble(this.popularity);
+		dest.writeDouble(this.voteAverage);
+		dest.writeInt(this.id);
+		dest.writeByte(this.adult ? (byte) 1 : (byte) 0);
+		dest.writeInt(this.voteCount);
+	}
+
+	public MovieResult() {
+	}
+
+	protected MovieResult(Parcel in) {
+		this.overview = in.readString();
+		this.originalLanguage = in.readString();
+		this.originalTitle = in.readString();
+		this.video = in.readByte() != 0;
+		this.title = in.readString();
+		this.genreIds = new ArrayList<Integer>();
+		in.readList(this.genreIds, Integer.class.getClassLoader());
+		this.posterPath = in.readString();
+		this.backdropPath = in.readString();
+		this.releaseDate = in.readString();
+		this.popularity = in.readDouble();
+		this.voteAverage = in.readDouble();
+		this.id = in.readInt();
+		this.adult = in.readByte() != 0;
+		this.voteCount = in.readInt();
+	}
+
+	public static final Parcelable.Creator<MovieResult> CREATOR = new Parcelable.Creator<MovieResult>() {
+		@Override
+		public MovieResult createFromParcel(Parcel source) {
+			return new MovieResult(source);
+		}
+
+		@Override
+		public MovieResult[] newArray(int size) {
+			return new MovieResult[size];
+		}
+	};
 }
