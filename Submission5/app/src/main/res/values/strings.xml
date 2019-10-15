@@ -28,4 +28,10 @@
     <string name="label_release_date">Release Data</string>
     <string name="label_airing_date">Airing Date</string>
     <string name="content_delete_favorite">Delete Button</string>
+    <string name="alert_delete_tv_title">Delete TV Show</string>
+    <string name="alert_delete_tv_message">Are You Sure To Delete This Tv Show?</string>
+    <string name="label_yes">Yes</string>
+    <string name="label_no">No</string>
+    <string name="alert_delete_movie_message">Are You Sure To Delete This Movie?</string>
+    <string name="alert_delete_movie_title">Delete Movie</string>
 </resources>

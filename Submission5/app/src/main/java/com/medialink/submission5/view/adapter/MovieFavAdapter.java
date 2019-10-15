@@ -1,7 +1,6 @@
 package com.medialink.submission5.view.adapter;
 
 import android.content.Context;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -25,13 +24,13 @@ public class MovieFavAdapter extends RecyclerView.Adapter<MovieFavAdapter.MyView
     private static final String TAG = "MovieFavAdapter";
     private Context mContext;
     private List<FavoriteItem> listMovie;
-    private FavoriteContract.MovieFavInterface mFavMovie;
+    private FavoriteContract.MovieFavInterface mFavMovieView;
 
     public MovieFavAdapter(Context context, List<FavoriteItem> listMovie,
                            FavoriteContract.MovieFavInterface favMovie) {
         this.mContext = context;
         this.listMovie = listMovie;
-        this.mFavMovie = favMovie;
+        this.mFavMovieView = favMovie;
     }
 
     public void setData(List<FavoriteItem> listMovie) {
@@ -82,13 +81,13 @@ public class MovieFavAdapter extends RecyclerView.Adapter<MovieFavAdapter.MyView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFavMovie.listClick(item, position);
+                mFavMovieView.listClick(item, position);
             }
         });
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFavMovie.itemDelete(item, position);
+                mFavMovieView.itemDelete(item, position);
             }
         });
     }

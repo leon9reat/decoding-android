@@ -2,6 +2,7 @@ package com.medialink.submission5.view.favorite;
 
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -10,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.app.AlertDialog;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -68,6 +70,7 @@ public class MovieFavFragment extends Fragment
             movieFavRecycler.setAdapter(mAdapter);
         }
 
+        //mFavPresenter.getMovieProvider(getContext());
         mFavPresenter.getMovie();
 
         return view;
@@ -116,8 +119,25 @@ public class MovieFavFragment extends Fragment
     }
 
     @Override
-    public void itemDelete(FavoriteItem movie, int position) {
-        mFavPresenter.deleteMovie(movie);
-        mAdapter.removeItem(position);
+    public void itemDelete(final FavoriteItem movie, final int position) {
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getContext());
+        alertDialogBuilder.setTitle(getString(R.string.alert_delete_movie_title));
+        alertDialogBuilder
+                .setMessage(getString(R.string.alert_delete_movie_message))
+                .setCancelable(false)
+                .setPositiveButton(getString(R.string.label_yes), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int i) {
+                        mFavPresenter.deleteMovie(movie);
+                        mAdapter.removeItem(position);
+                    }
+                })
+                .setNegativeButton(getString(R.string.label_no), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int id) {
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alertDialog = alertDialogBuilder.create();
+        alertDialog.show();
+
     }
 }

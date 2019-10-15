@@ -3,9 +3,7 @@ package com.medialink.submission5.contract;
 import android.content.Context;
 
 import com.medialink.submission5.model.local.FavoriteItem;
-import com.medialink.submission5.model.movie.MovieResult;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public interface FavoriteContract {
@@ -22,6 +20,10 @@ public interface FavoriteContract {
     }
 
     interface TvFavInterface {
+        void showLoading(Boolean state);
+        void showTv(List<FavoriteItem> list);
+        void listClick(FavoriteItem movie, int position);
+        void itemDelete(FavoriteItem movie, int position);
     }
 
     interface PresenterFavInterface {
@@ -30,8 +32,11 @@ public interface FavoriteContract {
         void setFavTvView(TvFavInterface tvView);
         void setFavView(FavoriteInterface mainView);
         void getMovie();
+        void getMovieProvider(Context context);
         void deleteMovie(FavoriteItem item);
         void getTv();
+        void getTvProvider(Context context);
+        void deleteTv(FavoriteItem item);
     }
 
 }

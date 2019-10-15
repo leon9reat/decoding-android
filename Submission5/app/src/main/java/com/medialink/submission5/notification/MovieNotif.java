@@ -14,15 +14,17 @@ import androidx.core.app.NotificationCompat;
 
 import com.medialink.submission5.MainActivity;
 import com.medialink.submission5.R;
-import com.medialink.submission5.notification.NotifItem;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class MovieNotif {
     private Context context;
+    private static MovieNotif sNotif;
+
     private int idNotif = 0;
     private final List<NotifItem> stackNotif = new ArrayList<>();
+
     private static final CharSequence CHANNEL_NAME = "movie channel";
     private final static String NOTIFICATION_GROUP = "movie_notif_group";
     private final static int NOTIFICATION_REQUEST_CODE = 200;
@@ -32,7 +34,20 @@ public class MovieNotif {
         this.context = context;
     }
 
-    public void sendNotif() {
+    public static MovieNotif getInstance(Context context) {
+        if (sNotif == null) {
+            sNotif = new MovieNotif(context);
+        }
+        return sNotif;
+    }
+
+    public void newNotif(NotifItem item) {
+        stackNotif.add(item);
+        sendNotif();
+        idNotif++;
+    }
+
+    private void sendNotif() {
         NotificationManager notificationManager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_movie_black_24dp);
 
@@ -56,9 +71,11 @@ public class MovieNotif {
                     .setContentIntent(pendingIntent)
                     .setAutoCancel(true);
         } else {
+            notificationManager.cancel(idNotif-1);
+
             NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
                     .addLine(stackNotif.get(idNotif).getTitle())
-                    .addLine(stackNotif.get(idNotif-1).getTitle())
+                    .addLine(stackNotif.get(idNotif - 1).getTitle())
                     .setBigContentTitle(idNotif + " Movie Updates")
                     .setSummaryText("Check it out");
             mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)

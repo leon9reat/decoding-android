@@ -19,7 +19,10 @@ import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.medialink.submission5.alarm.AlarmReceiver;
 import com.medialink.submission5.contract.MainContract;
+import com.medialink.submission5.notification.MovieNotif;
+import com.medialink.submission5.notification.NotifItem;
 import com.medialink.submission5.preference.PreferenceActivity;
 import com.medialink.submission5.preference.PreferenceHelper;
 import com.medialink.submission5.presenter.MainPresenter;
@@ -39,6 +42,7 @@ public class MainActivity extends AppCompatActivity
     private TabLayout tabMain;
     private ViewPager pagerMain;
     private MainContract.PresenterInterface mPresenter;
+    private AlarmReceiver alarmReceiver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,6 +51,12 @@ public class MainActivity extends AppCompatActivity
 
         mPresenter = MainPresenter.getInstance();
         mPresenter.setMainView(this);
+
+        alarmReceiver = new AlarmReceiver();
+
+        String repeatMessage = "Pesan disini";
+        alarmReceiver.setRepeatingAlarm(this, Const.ALARM_REPEATING,
+                 repeatMessage);
 
         initView();
 
@@ -179,12 +189,16 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        MovieNotif notif = MovieNotif.getInstance(this);
         switch (item.getItemId()) {
             case R.id.menu_notif_setting:
                 showSettings();
                 break;
             case R.id.menu_favorite:
-                showFavorite();
+
+
+                notif.newNotif(new NotifItem(1, "Filem 1", "Overview broh"));
+                //showFavorite();
                 break;
             case R.id.menu_change_language:
                 changeLanguage();

@@ -1,6 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.medialink.submission5">
+
+    <permission android:name="com.medialink.submission5.provider.READ_WRITE" />
+
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
         android:allowBackup="true"
@@ -8,9 +15,23 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
-        <activity android:name=".DetailActivity"></activity>
+        android:theme="@style/AppTheme"
+        tools:ignore="GoogleAppIndexingWarning">
+        <service
+            android:name=".alarm.AlarmService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".DetailActivity" />
         <activity android:name=".preference.PreferenceActivity" />
+        <activity android:name=".FavoriteActivity" />
+        <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
 
         <service
             android:name=".widget.MovieWidgetService"
@@ -26,15 +47,22 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/movie_widget_info" />
         </receiver>
-
-        <activity android:name=".FavoriteActivity" />
-        <activity android:name=".MainActivity">
+        <receiver
+            android:name=".alarm.AlarmReceiver"
+            android:directBootAware="true"
+            android:enabled="true"
+            android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.LOCKED_BOOT_COMPLETED" />
             </intent-filter>
-        </activity>
+        </receiver>
+
+        <provider
+            android:name=".model.provider.FavoriteContentProvider"
+            android:authorities="com.medialink.submission5.provider"
+            android:exported="true"
+            android:permission="com.medialink.submission5.provider.READ_WRITE" />
     </application>
 
 </manifest>

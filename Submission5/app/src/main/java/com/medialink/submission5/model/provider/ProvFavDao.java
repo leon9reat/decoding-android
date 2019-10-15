@@ -1,4 +1,6 @@
-package com.medialink.submission5.model.local;
+package com.medialink.submission5.model.provider;
+
+import android.database.Cursor;
 
 import androidx.room.Dao;
 import androidx.room.Delete;
@@ -7,35 +9,34 @@ import androidx.room.Query;
 import androidx.room.Update;
 
 import com.medialink.submission5.Const;
-
-import java.util.List;
+import com.medialink.submission5.model.local.FavoriteItem;
 
 @Dao
-public interface FavoriteDao {
+public interface ProvFavDao {
 
     @Query("SELECT COUNT(*) FROM " + Const.TABLE_FAVORITE)
     int count();
 
     @Insert
-    void insert(FavoriteItem... items);
+    Long insert(FavoriteItem provFavItem);
 
     @Update
-    void update(FavoriteItem... items);
+    int update(FavoriteItem provFavItem);
 
     @Delete
-    void delete(FavoriteItem... items);
+    int delete(FavoriteItem provFavItem);
+
+    @Query("DELETE FROM " + Const.TABLE_FAVORITE + " WHERE " + Const.FIELD_FAVORITE_ID + " = :id")
+    int deleteById(long id);
 
     @Query("SELECT * FROM " + Const.TABLE_FAVORITE)
-    List<FavoriteItem> getAllFavorite();
+    Cursor getAllFavorite();
 
     @Query("SELECT * FROM " + Const.TABLE_FAVORITE + " WHERE " + Const.FIELD_FAVORITE_TYPE_ID + " = :typeId")
-    List<FavoriteItem> getFavoriteByType(int typeId);
+    Cursor getFavoriteByType(int typeId);
 
     @Query("SELECT * FROM " + Const.TABLE_FAVORITE +
             " WHERE " + Const.FIELD_FAVORITE_TYPE_ID + " = :typeId" +
             " AND " + Const.FIELD_FAVORITE_MOVIE_ID + " = :movieId")
-    FavoriteItem getFavoriteByMovieId(int typeId, int movieId);
-
-    @Query("DELETE FROM " + Const.TABLE_FAVORITE + " WHERE " + Const.FIELD_FAVORITE_ID + " = :id")
-    int deleteById(long id);
+    Cursor getFavoriteByMovieId(int typeId, int movieId);
 }
