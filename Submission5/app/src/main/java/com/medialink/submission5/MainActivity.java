@@ -9,24 +9,29 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.Observer;
+import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
 import com.medialink.submission5.alarm.AlarmReceiver;
 import com.medialink.submission5.contract.MainContract;
+import com.medialink.submission5.model.MovieViewModel;
+import com.medialink.submission5.model.movie.MovieResult;
 import com.medialink.submission5.notification.MovieNotif;
 import com.medialink.submission5.notification.NotifItem;
 import com.medialink.submission5.preference.PreferenceActivity;
 import com.medialink.submission5.preference.PreferenceHelper;
 import com.medialink.submission5.presenter.MainPresenter;
 import com.medialink.submission5.view.adapter.MainPagerAdapter;
+
+import java.util.List;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
@@ -43,6 +48,7 @@ public class MainActivity extends AppCompatActivity
     private ViewPager pagerMain;
     private MainContract.PresenterInterface mPresenter;
     private AlarmReceiver alarmReceiver;
+    private MovieNotif mNotification;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,25 +58,27 @@ public class MainActivity extends AppCompatActivity
         mPresenter = MainPresenter.getInstance();
         mPresenter.setMainView(this);
 
-        alarmReceiver = new AlarmReceiver();
-
-        String repeatMessage = "Pesan disini";
-        alarmReceiver.setRepeatingAlarm(this, Const.ALARM_REPEATING,
-                 repeatMessage);
+        mNotification = MovieNotif.getInstance(this);
 
         initView();
-
-        PreferenceHelper pm = new PreferenceHelper(this);
-        if (pm.isRelesedReminder()) {
-            Toast.makeText(this, "released on", Toast.LENGTH_SHORT).show();
-        } else {
-            Toast.makeText(this, "released off", Toast.LENGTH_SHORT).show();
-        }
+        initAlarm();
 
         if (savedInstanceState != null) {
             mSearchText = savedInstanceState.getString(KEY_SEARCH_TEXT);
         }
 
+
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        if (intent.getExtras().containsKey("EXTRA")) {
+            if (intent.getIntExtra("EXTRA", 0) == Const.NOTIFICATION_REQUEST_CODE) {
+                mNotification.clearNotif();
+                Log.d(TAG, "onNewIntent: intent dari notification");
+            }
+        }
     }
 
     @Override
@@ -121,6 +129,23 @@ public class MainActivity extends AppCompatActivity
         pagerMain.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabMain));
     }
 
+    private void initAlarm() {
+        alarmReceiver = new AlarmReceiver();
+        if (PreferenceHelper.getInstance(this).isDailyReminder()) {
+            alarmReceiver.setRepeatingAlarm(this, Const.REQUEST_DAILY_REMINDER);
+            Log.d(TAG, "onCreate: set daily reminder");
+        } else {
+            alarmReceiver.cancelAlarm(this, Const.REQUEST_DAILY_REMINDER);
+        }
+        if (PreferenceHelper.getInstance(this).isRelesedReminder()) {
+            alarmReceiver.setRepeatingAlarm(this, Const.REQUEST_RELEASE_REMINDER);
+            Log.d(TAG, "onCreate: set relese reminder");
+        } else {
+            alarmReceiver.cancelAlarm(this, Const.REQUEST_RELEASE_REMINDER);
+        }
+
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater inflater = getMenuInflater();
@@ -139,7 +164,7 @@ public class MainActivity extends AppCompatActivity
                     int activeTab = tabMain.getSelectedTabPosition();
                     if (activeTab == 0) {
                         if (query.isEmpty()) {
-                            mPresenter.getMovie(1);
+                            mPresenter.getMovie();
                         } else {
                             mPresenter.getMovieFilter(mSearchText);
                         }
@@ -162,7 +187,7 @@ public class MainActivity extends AppCompatActivity
                         int activeTab = tabMain.getSelectedTabPosition();
 
                         if (activeTab == 0) {
-                            mPresenter.getMovie(1);
+                            mPresenter.getMovie();
                         } else {
                             mPresenter.getTv(1);
                         }
@@ -189,16 +214,13 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        MovieNotif notif = MovieNotif.getInstance(this);
+
         switch (item.getItemId()) {
             case R.id.menu_notif_setting:
                 showSettings();
                 break;
             case R.id.menu_favorite:
-
-
-                notif.newNotif(new NotifItem(1, "Filem 1", "Overview broh"));
-                //showFavorite();
+                showFavorite();
                 break;
             case R.id.menu_change_language:
                 changeLanguage();
@@ -240,6 +262,7 @@ public class MainActivity extends AppCompatActivity
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
         if (requestCode == Const.CHANGE_LANGUAGE_REQUEST) {
             // setelah ganti bahasa, refresh lagi datanya
             //((MovieFragment) getSupportFragmentManager().getFragments().get(0)).refreshMovie();
@@ -247,5 +270,6 @@ public class MainActivity extends AppCompatActivity
 
             Log.d(TAG, "onActivityResult: Ubah Setting Bahasa");
         }
+
     }
 }

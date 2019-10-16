@@ -9,20 +9,28 @@ import com.medialink.submission5.R;
 
 public class PreferenceHelper {
 
-    private final SharedPreferences mPref;
-    private Context context;
+    private static PreferenceHelper mPrefHelper;
+    private static SharedPreferences mPref;
+    private static Context mContext;
 
     private boolean isRelesedReminder;
     private boolean isDailyReminder;
 
-    public PreferenceHelper(Context context) {
-        this.context = context;
-        this.mPref = PreferenceManager.getDefaultSharedPreferences(context);
-        //= context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+    public PreferenceHelper() {
+    }
+
+    public static PreferenceHelper getInstance(Context context) {
+        if (mPrefHelper == null) {
+            mPrefHelper = new PreferenceHelper();
+            mContext = context;
+            mPref = PreferenceManager.getDefaultSharedPreferences(context);
+        }
+
+        return mPrefHelper;
     }
 
     public boolean isRelesedReminder() {
-        String key = context.getString(R.string.pref_key_release_reminder);
+        String key = mContext.getString(R.string.pref_key_release_reminder);
         isRelesedReminder = mPref.getBoolean(key, true);
         return isRelesedReminder;
     }
@@ -32,7 +40,7 @@ public class PreferenceHelper {
     }
 
     public boolean isDailyReminder() {
-        String key = context.getString(R.string.pref_key_daily_reminder);
+        String key = mContext.getString(R.string.pref_key_daily_reminder);
         isDailyReminder = mPref.getBoolean(key, true);
         return isDailyReminder;
     }

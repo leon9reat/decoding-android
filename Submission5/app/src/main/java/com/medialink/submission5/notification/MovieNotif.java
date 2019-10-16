@@ -12,6 +12,7 @@ import android.os.Build;
 
 import androidx.core.app.NotificationCompat;
 
+import com.medialink.submission5.Const;
 import com.medialink.submission5.MainActivity;
 import com.medialink.submission5.R;
 
@@ -24,10 +25,8 @@ public class MovieNotif {
 
     private int idNotif = 0;
     private final List<NotifItem> stackNotif = new ArrayList<>();
-
     private static final CharSequence CHANNEL_NAME = "movie channel";
     private final static String NOTIFICATION_GROUP = "movie_notif_group";
-    private final static int NOTIFICATION_REQUEST_CODE = 200;
     private static final int MAX_NOTIFICATION = 2;
 
     public MovieNotif(Context context) {
@@ -52,9 +51,11 @@ public class MovieNotif {
         Bitmap largeIcon = BitmapFactory.decodeResource(context.getResources(), R.drawable.ic_movie_black_24dp);
 
         Intent intent = new Intent(context, MainActivity.class);
+        intent.putExtra("EXTRA", Const.NOTIFICATION_REQUEST_CODE);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
+
         PendingIntent pendingIntent = PendingIntent.getActivity(context,
-                NOTIFICATION_REQUEST_CODE,
+                Const.NOTIFICATION_REQUEST_CODE,
                 intent,
                 PendingIntent.FLAG_UPDATE_CURRENT);
 
@@ -73,14 +74,17 @@ public class MovieNotif {
         } else {
             notificationManager.cancel(idNotif-1);
 
+            String textInboxBesarDiatas = String.format("%s %s", idNotif, context.getString(R.string.notif_inbox_title));
+            String textSummaryKecilDibawah = String.format("%s", context.getString(R.string.notif_inbox_summary));
+
             NotificationCompat.InboxStyle inboxStyle = new NotificationCompat.InboxStyle()
                     .addLine(stackNotif.get(idNotif).getTitle())
                     .addLine(stackNotif.get(idNotif - 1).getTitle())
-                    .setBigContentTitle(idNotif + " Movie Updates")
-                    .setSummaryText("Check it out");
+                    .setBigContentTitle(textInboxBesarDiatas)
+                    .setSummaryText(textSummaryKecilDibawah);
             mBuilder = new NotificationCompat.Builder(context, CHANNEL_ID)
-                    .setContentTitle(idNotif + " Movie Updates")
-                    .setContentText("Check it out")
+                    .setContentTitle(textInboxBesarDiatas)
+                    .setContentText(textSummaryKecilDibawah)
                     .setSmallIcon(R.drawable.ic_notifications_active_white_24dp)
                     .setGroup(NOTIFICATION_GROUP)
                     .setGroupSummary(true)

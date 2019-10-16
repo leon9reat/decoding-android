@@ -2,9 +2,11 @@ package com.medialink.submission5.preference;
 
 import android.os.Bundle;
 import android.view.MenuItem;
+import android.widget.Switch;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.preference.SwitchPreference;
 
 import com.medialink.submission5.R;
 
@@ -24,6 +26,8 @@ public class PreferenceActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.setting_holder, new PreferenceFragment())
                 .commit();
+
+
 
     }
 

@@ -40,37 +40,13 @@ public class MainPresenter implements MainContract.PresenterInterface {
     }
 
     @Override
-    public void getMovie(int page) {
-        mMovieView.showLoading(true);
-
-        final ArrayList<MovieResult> list = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            MovieResult movie = new MovieResult();
-            movie.setTitle("Title " + i);
-            movie.setReleaseDate("Date Release " + i);
-            movie.setOverview("Overview Overview Overview Overview Overview Overview Overview " + i);
-
-            list.add(movie);
-        }
-
-        mMovieView.showMovie(list);
+    public void getMovie() {
+        mMovieView.getMovie();
     }
 
     @Override
     public void getMovieFilter(String s) {
-        mMovieView.showLoading(true);
-
-        final ArrayList<MovieResult> list = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            MovieResult movie = new MovieResult();
-            movie.setTitle(s + " Filter Title " + i);
-            movie.setReleaseDate(s + " Filter Date Release " + i);
-            movie.setOverview(s + "Filter Overview Filter Overview Filter Overview Filter Overview Filter Overview Overview Overview " + i);
-
-            list.add(movie);
-        }
-
-        mMovieView.showMovie(list);
+        mMovieView.getMovieFilter(s);
     }
 
     @Override

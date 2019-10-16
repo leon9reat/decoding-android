@@ -8,6 +8,8 @@ import android.content.Intent;
 import android.util.Log;
 
 import com.medialink.submission5.Const;
+import com.medialink.submission5.notification.MovieNotif;
+import com.medialink.submission5.notification.NotifItem;
 
 import java.text.DateFormat;
 import java.text.ParseException;
@@ -18,8 +20,6 @@ import java.util.Locale;
 public class AlarmReceiver extends BroadcastReceiver {
 
     private static final String TAG = "AlarmReceiver";
-
-    public static final String EXTRA_MESSAGE = "message";
     public static final String EXTRA_TYPE = "type";
 
     private String DATE_FORMAT = "yyyy-MM-dd";
@@ -27,39 +27,44 @@ public class AlarmReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {
-
+        int type = intent.getIntExtra(EXTRA_TYPE, 0);
         if (intent.getAction() != null) {
-            if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-                // jika baru direstart, akan hidupin service menghasilkan intent alarm
-                Intent serviceIntent = new Intent(context, AlarmService.class);
-                context.startService(serviceIntent);
-
-                Log.d(TAG, "onReceive: Alarm diset ulang setelah restart");
-
-                return;
-            }
+            Log.d(TAG, "onReceive: "+intent.getAction());
         }
 
-        String type = intent.getStringExtra(EXTRA_TYPE);
-        String message = intent.getStringExtra(EXTRA_MESSAGE);
+        if (type == Const.REQUEST_DAILY_REMINDER) {
+            MovieNotif notif = MovieNotif.getInstance(context);
+            NotifItem notifItem = new NotifItem(0, "Daily Reminder", "Hi, We miss you...");
+            notif.newNotif(notifItem);
 
-        String title = type.equalsIgnoreCase(Const.ALARM_ONE_TIME) ? Const.ALARM_ONE_TIME : Const.ALARM_REPEATING;
-        int notifId = type.equalsIgnoreCase(Const.ALARM_ONE_TIME) ? Const.REQUEST_ONE_TIME : Const.REQUEST_REPEAT;
+            Log.d(TAG, "onReceive: tampilkan notification daily");
+        } else if (type == Const.REQUEST_RELEASE_REMINDER){
+            MovieNotif notif = MovieNotif.getInstance(context);
+            for (int i = 0; i < 5; i++) {
+                NotifItem notifItem = new NotifItem(0, "New Movie "+i, "Check New Movie "+i);
+                notif.newNotif(notifItem);
+            }
 
-        Log.d(TAG, "onReceive: Alarm " + title + ", " + message);
+            Log.d(TAG, "onReceive: tampilkan notification release");
+        }
 
     }
 
-    public void setRepeatingAlarm(Context context, String type, String message) {
+    public void setRepeatingAlarm(Context context, int type) {
 
         //if (isDateInvalid(time, TIME_FORMAT)) return;
 
-        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+
         Intent intent = new Intent(context, AlarmReceiver.class);
-        intent.putExtra(EXTRA_MESSAGE, message);
         intent.putExtra(EXTRA_TYPE, type);
 
-        String[] timeArray = Const.ALARM_RELEASE_TIME.split(":");
+        String time = "00:00";
+        if (type == Const.REQUEST_RELEASE_REMINDER) {
+            time = Const.TIME_RELEASE_REMINDER;
+        } else {
+            time = Const.TIME_DAILY_REMINDER;
+        }
+        String[] timeArray = time.split(":");
 
         Calendar calendar = Calendar.getInstance();
         calendar.set(Calendar.HOUR_OF_DAY, Integer.parseInt(timeArray[0]));
@@ -68,11 +73,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         PendingIntent pendingIntent = PendingIntent.getBroadcast(
                 context,
-                Const.REQUEST_REPEAT,
+                type,
                 intent,
                 0);
 
-
+        AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (alarmManager != null) {
             alarmManager.setInexactRepeating(
                     AlarmManager.RTC_WAKEUP,
@@ -80,7 +85,6 @@ public class AlarmReceiver extends BroadcastReceiver {
                     AlarmManager.INTERVAL_DAY,
                     pendingIntent
             );
-
 
             /*if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
                 alarmManager.setAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, 0, pendingIntent);
@@ -91,8 +95,7 @@ public class AlarmReceiver extends BroadcastReceiver {
             }
             */
 
-
-            Log.d(TAG, "setRepeatingAlarm: Set " + Const.ALARM_RELEASE_TIME);
+            Log.d(TAG, "setRepeatingAlarm: Set " + type + " = " + time);
         }
 
     }
@@ -108,17 +111,16 @@ public class AlarmReceiver extends BroadcastReceiver {
         }
     }
 
-    public void cancelAlarm(Context context, String type) {
+    public void cancelAlarm(Context context, int type) {
 
-        // TODO : nanti alarm harus di ubah menjadi 2 jenis, ambil data dari preference
         AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         Intent intent = new Intent(context, AlarmReceiver.class);
-        int requestCode = type.equalsIgnoreCase(Const.ALARM_ONE_TIME) ? Const.REQUEST_ONE_TIME : Const.REQUEST_REPEAT;
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, type, intent, 0);
         pendingIntent.cancel();
         if (alarmManager != null) {
             alarmManager.cancel(pendingIntent);
         }
-        Log.d(TAG, "cancelAlarm: Alarm Dibatalkan");
+        Log.d(TAG, "cancelAlarm: Alarm Dibatalkan "+ type);
     }
 }

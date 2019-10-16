@@ -19,11 +19,13 @@ public interface MainContract {
 
 
     interface MovieInterface {
+        void getMovie();
+        void getMovieFilter(String s);
         void showMovie(ArrayList<MovieResult> list);
-
         void listClick(MovieResult movie, int position);
-
         void showLoading(Boolean state);
+        void setError(String msg);
+        void showMessage(String msg);
     }
 
     interface TvInterface {
@@ -41,7 +43,7 @@ public interface MainContract {
 
         void setMainView(MainInterface mainView);
 
-        void getMovie(int page);
+        void getMovie();
 
         void getMovieFilter(String s);
 
