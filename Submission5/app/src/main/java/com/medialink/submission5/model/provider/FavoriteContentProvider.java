@@ -7,6 +7,7 @@ import android.content.Context;
 import android.content.UriMatcher;
 import android.database.Cursor;
 import android.net.Uri;
+import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -62,6 +63,7 @@ public class FavoriteContentProvider extends ContentProvider {
                     cursor = provFavDao.getAllFavorite();
                     break;
                 case CODE_FAV_TYPE:
+                    Log.d("test", "query: "+uri.toString());
                     cursor = provFavDao.getFavoriteByType(Integer.valueOf(uri.getLastPathSegment()));
                     break;
                 case CODE_FAV_ITEM_MOVIE:

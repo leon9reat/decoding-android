@@ -70,8 +70,8 @@ public class MovieFavFragment extends Fragment
             movieFavRecycler.setAdapter(mAdapter);
         }
 
-        //mFavPresenter.getMovieProvider(getContext());
-        mFavPresenter.getMovie();
+        mFavPresenter.getMovieProvider(getContext());
+        //mFavPresenter.getMovie();
 
         return view;
     }

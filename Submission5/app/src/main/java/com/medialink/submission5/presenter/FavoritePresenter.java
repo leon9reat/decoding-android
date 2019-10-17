@@ -122,8 +122,10 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
         @Override
         protected ArrayList<FavoriteItem> doInBackground(Integer... params) {
             Context context = weakContext.get();
+
+            String uri = String.format("%s/%d",FavoriteContentProvider.URI_FAVORITE, params[0].intValue());
             Cursor dataCursor = context.getContentResolver().query(
-                    Uri.parse(FavoriteContentProvider.URI_FAVORITE + "/" + params.toString()),
+                    Uri.parse(uri),
                     null,
                     null,
                     null,
@@ -151,6 +153,7 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
         @Override
         protected void onPostExecute(ArrayList<FavoriteItem> provFavItems) {
             super.onPostExecute(provFavItems);
+            weakCallback.get().showLoading(false);
             weakCallback.get().showMovie(provFavItems);
             Log.d(TAG, "onPostExecute: " + provFavItems.size());
         }
