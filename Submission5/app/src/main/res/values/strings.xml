@@ -40,6 +40,9 @@
     <string name="label_status">Status</string>
     <string name="label_genre">Genre</string>
     <string name="label_runtime_movie">Runtime</string>
+    <string name="label_runtime_tv">Season / Episode</string>
+    <string name="jam">hr</string>
+    <string name="menit">min</string>
     <string name="content_img_cast">Cast Image</string>
     <string name="detail_header_cast">Cast</string>
     <string name="header_overview">Overview</string>

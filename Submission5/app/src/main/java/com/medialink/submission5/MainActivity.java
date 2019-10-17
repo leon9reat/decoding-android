@@ -1,7 +1,11 @@
 package com.medialink.submission5;
 
 import android.app.SearchManager;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.util.Log;
@@ -9,28 +13,35 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.SearchView;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProviders;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
 import com.google.android.material.tabs.TabLayout;
+import com.karumi.dexter.Dexter;
+import com.karumi.dexter.MultiplePermissionsReport;
+import com.karumi.dexter.PermissionToken;
+import com.karumi.dexter.listener.DexterError;
+import com.karumi.dexter.listener.PermissionRequest;
+import com.karumi.dexter.listener.PermissionRequestErrorListener;
+import com.karumi.dexter.listener.multi.MultiplePermissionsListener;
 import com.medialink.submission5.alarm.AlarmReceiver;
 import com.medialink.submission5.contract.MainContract;
-import com.medialink.submission5.model.MovieViewModel;
-import com.medialink.submission5.model.movie.MovieResult;
 import com.medialink.submission5.notification.MovieNotif;
-import com.medialink.submission5.notification.NotifItem;
 import com.medialink.submission5.preference.PreferenceActivity;
 import com.medialink.submission5.preference.PreferenceHelper;
 import com.medialink.submission5.presenter.MainPresenter;
 import com.medialink.submission5.view.adapter.MainPagerAdapter;
+import com.medialink.submission5.widget.MovieWidget;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
@@ -40,12 +51,14 @@ public class MainActivity extends AppCompatActivity
 
     private static final String TAG = "MainActivity";
     private static final String KEY_SEARCH_TEXT = "SEARCH_TEXT";
+    private static final String DATE_FORMAT = "yyyy-MM-dd";
     private String mSearchText;
 
     private SearchManager searchManager;
     private SearchView searchView;
     private TabLayout tabMain;
     private ViewPager pagerMain;
+
     private MainContract.PresenterInterface mPresenter;
     private AlarmReceiver alarmReceiver;
     private MovieNotif mNotification;
@@ -64,10 +77,11 @@ public class MainActivity extends AppCompatActivity
         initAlarm();
 
         if (savedInstanceState != null) {
+
             mSearchText = savedInstanceState.getString(KEY_SEARCH_TEXT);
         }
 
-
+        requestDatabasePermission();
     }
 
     @Override
@@ -76,7 +90,12 @@ public class MainActivity extends AppCompatActivity
         if (intent.getExtras().containsKey("EXTRA")) {
             if (intent.getIntExtra("EXTRA", 0) == Const.NOTIFICATION_REQUEST_CODE) {
                 mNotification.clearNotif();
-                Log.d(TAG, "onNewIntent: intent dari notification");
+
+                SimpleDateFormat format = new SimpleDateFormat(DATE_FORMAT);
+                String drTgl = format.format(new Date());
+                String spTgl = format.format(new Date());
+
+                mPresenter.getMovieRelase(drTgl, spTgl);
             }
         }
     }
@@ -220,6 +239,19 @@ public class MainActivity extends AppCompatActivity
                 showSettings();
                 break;
             case R.id.menu_favorite:
+                /*Intent intentWidget = new Intent(this, MovieWidget.class);
+                intentWidget.setAction("com.testing.bro");
+                sendBroadcast(intentWidget);*/
+
+                /*Intent intent = new Intent(this, MovieWidget.class);
+                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+                // since it seems the onUpdate() is only fired on that:
+                int[] ids = AppWidgetManager.getInstance(getApplication())
+                        .getAppWidgetIds(new ComponentName(getApplication(), MovieWidget.class));
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                sendBroadcast(intent);*/
+
                 showFavorite();
                 break;
             case R.id.menu_change_language:
@@ -271,5 +303,62 @@ public class MainActivity extends AppCompatActivity
             Log.d(TAG, "onActivityResult: Ubah Setting Bahasa");
         }
 
+    }
+
+    private void requestDatabasePermission() {
+        Dexter.withActivity(this)
+                .withPermissions("com.medialink.submission5.READ_DATABASE",
+                        "com.medialink.submission5.WRITE_DATABASE")
+                .withListener(new MultiplePermissionsListener() {
+                    @Override
+                    public void onPermissionsChecked(MultiplePermissionsReport report) {
+                        // check if all permissions are granted
+                        if (report.areAllPermissionsGranted()) {
+                            Toast.makeText(getApplicationContext(), "All permissions are granted by user!", Toast.LENGTH_SHORT).show();
+                        }
+
+                        // check for permanent denial of any permission
+                        if (report.isAnyPermissionPermanentlyDenied()) {
+                            // show alert dialog navigating to Settings
+                            openSettingsDialog();
+                        }
+                    }
+
+                    @Override
+                    public void onPermissionRationaleShouldBeShown(List<PermissionRequest> permissions, PermissionToken token) {
+                        token.continuePermissionRequest();
+                    }
+                })
+                .withErrorListener(new PermissionRequestErrorListener() {
+                    @Override
+                    public void onError(DexterError error) {
+                        Toast.makeText(getApplicationContext(), "Some Error! ", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .onSameThread()
+                .check();
+    }
+
+    private void openSettingsDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(MainActivity.this);
+        builder.setTitle("Required Permissions");
+        builder.setMessage("This app require permission to use awesome feature. Grant them in app settings.");
+        builder.setPositiveButton("Take Me To SETTINGS", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+                Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                Uri uri = Uri.fromParts("package", getPackageName(), null);
+                intent.setData(uri);
+                startActivityForResult(intent, 101);
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                dialogInterface.cancel();
+            }
+        });
+        builder.show();
     }
 }

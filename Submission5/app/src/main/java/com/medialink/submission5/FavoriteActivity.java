@@ -1,70 +1,44 @@
 package com.medialink.submission5;
 
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.MenuItem;
+
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.room.Room;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.MenuItem;
-
 import com.google.android.material.tabs.TabLayout;
 import com.medialink.submission5.contract.FavoriteContract;
-import com.medialink.submission5.model.local.AppDatabase;
-import com.medialink.submission5.model.local.FavoriteDao;
 import com.medialink.submission5.model.local.FavoriteItem;
+import com.medialink.submission5.presenter.FavoritePresenter;
+import com.medialink.submission5.presenter.MainPresenter;
 import com.medialink.submission5.view.adapter.FavoritePagerAdapter;
-
-import java.util.List;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
 public class FavoriteActivity extends AppCompatActivity
-    implements FavoriteContract.FavoriteInterface {
+        implements FavoriteContract.FavoriteInterface {
 
     private static final String TAG = "FavoriteActivity";
+    private static final int REQUEST_FROM_FAVORITE = 3;
 
     private TabLayout tabFavorite;
     private ViewPager pagerFavorite;
-
-    private AppDatabase database;
-    private FavoriteDao favDao;
+    private FavoriteContract.PresenterFavInterface mPresenter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_favorite);
 
+        mPresenter = FavoritePresenter.getInstance();
+        mPresenter.setFavView(this);
+
         initView();
-
-        database = Room.databaseBuilder(this, AppDatabase.class, "movie_db")
-                .allowMainThreadQueries()
-                .build();
-        favDao = database.getFavoriteDao();
-        List<FavoriteItem> items = favDao.getAllFavorite();
-        if (items.size() < 1) {
-            for (int i = 0; i < 5; i++) {
-                FavoriteItem item = new FavoriteItem();
-                item.setTypeId(Const.DETAIL_MOVIE);
-                item.setMovieId(i);
-                item.setTitle("Judul Movie "+i);
-                item.setReleaseDate("0000-00-0"+i);
-                item.setOverview(getString(R.string.example_overview));
-
-                favDao.insert(item);
-
-                FavoriteItem item2 = new FavoriteItem();
-                item2.setTypeId(Const.DETAIL_TV);
-                item2.setMovieId(i);
-                item2.setTitle("Judul Film "+i);
-                item2.setReleaseDate("0000-00-0"+i);
-                item2.setOverview(getString(R.string.example_overview));
-
-                favDao.insert(item2);
-            }
-        }
     }
 
     private void initView() {
@@ -127,6 +101,20 @@ public class FavoriteActivity extends AppCompatActivity
         args.putInt(Const.KEY_DETAIL_TYPE, detailType);
         args.putInt(Const.KEY_ID, id);
         intent.putExtras(args);
-        startActivity(intent);
+        startActivityForResult(intent, REQUEST_FROM_FAVORITE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_FROM_FAVORITE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    FavoriteItem item = data.getParcelableExtra("FAVORITE");
+                    mPresenter.getMovie();
+                    Log.d(TAG, "onActivityResult: return item " + item.getTitle());
+                }
+            }
+        }
     }
 }

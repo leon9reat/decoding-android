@@ -17,13 +17,13 @@ public interface FavoriteDao {
     int count();
 
     @Insert
-    void insert(FavoriteItem... items);
+    Long insert(FavoriteItem items);
 
     @Update
-    void update(FavoriteItem... items);
+    int update(FavoriteItem... items);
 
     @Delete
-    void delete(FavoriteItem... items);
+    int delete(FavoriteItem... items);
 
     @Query("SELECT * FROM " + Const.TABLE_FAVORITE)
     List<FavoriteItem> getAllFavorite();

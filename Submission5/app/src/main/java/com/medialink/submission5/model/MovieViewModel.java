@@ -74,6 +74,37 @@ public class MovieViewModel extends ViewModel {
         });
     }
 
+    public void setMovieRelease(String drTgl, String spTgl) {
+        mViewMovie.showLoading(true);
+        Retrofit retrofit = RetrofitClient.getRetrofitInstance();
+        ApiInterface api = retrofit.create(ApiInterface.class);
+
+        String lang = "en-US";
+        if (Locale.getDefault().getLanguage().equalsIgnoreCase("in")) lang = "id-ID";
+
+        Call<MovieRespon> call = api.getMovieRelease(mMoviePage, lang, drTgl, spTgl);
+        call.enqueue(new Callback<MovieRespon>() {
+            @Override
+            public void onResponse(Call<MovieRespon> call, Response<MovieRespon> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        movieList.setValue(response.body().getResults());
+                        mViewMovie.showLoading(false);
+                    }
+                } else {
+                    mViewMovie.showLoading(false);
+                    mViewMovie.setError("Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<MovieRespon> call, Throwable t) {
+                mViewMovie.showLoading(false);
+                mViewMovie.setError("Fatal Error: " + t.getMessage());
+            }
+        });
+    }
+
     private void loadMovieList() {
         mViewMovie.showLoading(true);
         Retrofit retrofit = RetrofitClient.getRetrofitInstance();

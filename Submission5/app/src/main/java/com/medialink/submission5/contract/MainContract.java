@@ -9,11 +9,8 @@ public interface MainContract {
 
     interface MainInterface {
         void showSettings();
-
         void showDetail(int detailType, int id);
-
         void showFavorite();
-
         void changeLanguage();
     }
 
@@ -21,6 +18,7 @@ public interface MainContract {
     interface MovieInterface {
         void getMovie();
         void getMovieFilter(String s);
+        void getMovieRelease(String drTgl, String spTgl);
         void showMovie(ArrayList<MovieResult> list);
         void listClick(MovieResult movie, int position);
         void showLoading(Boolean state);
@@ -30,25 +28,18 @@ public interface MainContract {
 
     interface TvInterface {
         void showTv(ArrayList<TvResult> list);
-
         void listClick(TvResult tv, int position);
-
         void showLoading(Boolean state);
     }
 
     interface PresenterInterface {
         void setMovieView(MovieInterface movieView);
-
         void setTvView(TvInterface tvView);
-
         void setMainView(MainInterface mainView);
-
         void getMovie();
-
         void getMovieFilter(String s);
-
+        void getMovieRelase(String drTgl, String spTgl);
         void getTv(int page);
-
         void getTvFilter(String s);
     }
 

@@ -1,7 +1,6 @@
 package com.medialink.submission5.presenter;
 
 import com.medialink.submission5.contract.MainContract;
-import com.medialink.submission5.model.movie.MovieResult;
 import com.medialink.submission5.model.tv.TvResult;
 
 import java.util.ArrayList;
@@ -50,6 +49,11 @@ public class MainPresenter implements MainContract.PresenterInterface {
     }
 
     @Override
+    public void getMovieRelase(String drTgl, String spTgl) {
+        mMovieView.getMovieRelease(drTgl, spTgl);
+    }
+
+    @Override
     public void getTv(int page) {
         mTvView.showLoading(true);
 
@@ -82,4 +86,6 @@ public class MainPresenter implements MainContract.PresenterInterface {
 
         mTvView.showTv(list);
     }
+
+
 }

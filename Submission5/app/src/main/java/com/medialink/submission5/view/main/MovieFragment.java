@@ -138,6 +138,11 @@ public class MovieFragment extends Fragment
     }
 
     @Override
+    public void getMovieRelease(String drTgl, String spTgl) {
+        model.setMovieRelease(drTgl, spTgl);
+    }
+
+    @Override
     public void showMovie(ArrayList<MovieResult> list) {
         mListMovie.clear();
         mListMovie.addAll(list);

@@ -42,7 +42,7 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
 
     @Override
     public void setDatabase(Context context) {
-        database = Room.databaseBuilder(context, AppDatabase.class, "movie_db")
+        database = Room.databaseBuilder(context, AppDatabase.class, Const.DATABASE_NAME)
                 .allowMainThreadQueries()
                 .build();
         favDao = database.getFavoriteDao();

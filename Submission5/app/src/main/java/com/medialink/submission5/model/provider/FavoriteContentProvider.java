@@ -16,7 +16,7 @@ import com.medialink.submission5.model.local.FavoriteItem;
 
 public class FavoriteContentProvider extends ContentProvider {
 
-    public static final String AUTHORITY = "com.medialink.submission5.provider";
+    public static final String AUTHORITY = "com.medialink.submission5.model.provider";
     public static final String SCHEME = "content";
     //public static final Uri URI_FAVORITE = Uri.parse("content://" + AUTHORITY + "/" + Const.TABLE_FAVORITE);
     public static final Uri URI_FAVORITE = new Uri.Builder().scheme(SCHEME)

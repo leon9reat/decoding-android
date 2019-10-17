@@ -3,8 +3,11 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.medialink.submission5">
 
-    <permission android:name="com.medialink.submission5.provider.READ_WRITE" />
+    <permission android:name="com.medialink.submission5.READ_DATABASE" android:protectionLevel="normal"/>
+    <permission android:name="com.medialink.submission5.WRITE_DATABASE" android:protectionLevel="normal"/>
 
+    <uses-permission android:name="com.medialink.submission5.READ_DATABASE"/>
+    <uses-permission android:name="com.medialink.submission5.WRITE_DATABASE"/>
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.INTERNET"/>
@@ -33,9 +36,8 @@
         <service
             android:name=".widget.MovieWidgetService"
             android:enabled="true"
-            android:exported="true" />
-
-
+            android:exported="true"
+            android:permission="android.permission.BIND_REMOTEVIEWS"/>
 
         <receiver android:name=".widget.MovieWidget">
             <intent-filter>
@@ -60,9 +62,10 @@
 
         <provider
             android:name=".model.provider.FavoriteContentProvider"
-            android:authorities="com.medialink.submission5.provider"
+            android:authorities="com.medialink.submission5.model.provider"
             android:exported="true"
-            android:permission="com.medialink.submission5.provider.READ_WRITE" />
+            android:readPermission="com.medialink.submission5.READ_DATABASE"
+            android:writePermission="com.medialink.submission5.WRITE_DATABASE"/>
     </application>
 
 </manifest>
