@@ -10,6 +10,8 @@ import com.medialink.submission5.model.movie.CreditMovieRespon;
 import com.medialink.submission5.model.movie.MovieDetailRespon;
 import com.medialink.submission5.model.network.ApiInterface;
 import com.medialink.submission5.model.network.RetrofitClient;
+import com.medialink.submission5.model.tv.CreditTvRespon;
+import com.medialink.submission5.model.tv.TvDetailRespon;
 
 import java.util.ArrayList;
 import java.util.Locale;
@@ -155,6 +157,109 @@ public class DetailViewModel extends ViewModel {
 
     private void loadTv(int tvId) {
 
+        final DetailModel data = new DetailModel();
+        mDetailView.showLoading(true);
+
+        Retrofit retrofit = RetrofitClient.getRetrofitInstance();
+        ApiInterface api = retrofit.create(ApiInterface.class);
+
+        String lang = "en-US";
+        if (Locale.getDefault().getLanguage().equalsIgnoreCase("in")) lang = "id-ID";
+
+        Call<TvDetailRespon> callDetail = api.getTvDetail(tvId, lang);
+        callDetail.enqueue(new Callback<TvDetailRespon>() {
+            @Override
+            public void onResponse(Call<TvDetailRespon> call, Response<TvDetailRespon> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        data.setTitle(response.body().getName());
+                        data.setReleaseDate(response.body().getFirstAirDate());
+                        //data.setLabelReleaseDate();
+                        data.setOverview(response.body().getOverview());
+                        data.setVoteAverage(String.valueOf(response.body().getVoteAverage()));
+                        data.setPosterPath(response.body().getPosterPath());
+                        //data.setLabelRuntime();
+
+                        data.setHour_or_season(response.body().getNumberOfSeasons());
+                        data.setMin_or_episode(response.body().getNumberOfEpisodes());
+
+                        data.setStatus(response.body().getStatus());
+
+                        if (response.body().getGenres() != null) {
+                            String genre = "";
+                            for (int i = 0; i < response.body().getGenres().size(); i++) {
+                                if (genre.isEmpty()) {
+                                    genre = response.body().getGenres().get(i).getName();
+                                } else {
+                                    genre = genre + ", " + response.body().getGenres().get(i).getName();
+                                }
+                            }
+                            data.setGenre(genre);
+
+                        }
+
+
+                        detailModel.setValue(data);
+                        mDetailView.showLoading(false);
+                    }
+                } else {
+                    mDetailView.showLoading(false);
+                    mDetailView.setError("Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<TvDetailRespon> call, Throwable t) {
+                mDetailView.showLoading(false);
+                mDetailView.setError("Fatal Error: " + t.getMessage());
+            }
+        });
+
+        Call<CreditTvRespon> callCredit = api.getTvCredit(tvId);
+        callCredit.enqueue(new Callback<CreditTvRespon>() {
+            @Override
+            public void onResponse(Call<CreditTvRespon> call, Response<CreditTvRespon> response) {
+                if (response.isSuccessful()) {
+                    if (response.body() != null) {
+                        ArrayList<CastItem> list = (ArrayList<CastItem>) response.body().getCast();
+                        if (list.size() > 0 && list.get(0) != null) {
+                            data.setCastName1(list.get(0).getName());
+                            data.setProfilePath1(list.get(0).getProfilePath());
+                        }
+                        if (list.size() > 1 && list.get(1) != null) {
+                            data.setCastName2(list.get(1).getName());
+                            data.setProfilePath2(list.get(1).getProfilePath());
+                        }
+                        if (list.size() > 2 && list.get(2) != null) {
+                            data.setCastName3(list.get(2).getName());
+                            data.setProfilePath3(list.get(2).getProfilePath());
+
+                        }
+                        if (list.size() > 3 && list.get(3) != null) {
+                            data.setCastName4(list.get(3).getName());
+                            data.setProfilePath4(list.get(3).getProfilePath());
+
+                        }
+                        if (list.size() > 4 && list.get(4) != null) {
+                            data.setCastName5(list.get(4).getName());
+                            data.setProfilePath5(list.get(4).getProfilePath());
+                        }
+
+                        detailModel.setValue(data);
+                        mDetailView.showLoading(false);
+                    }
+                } else {
+                    mDetailView.showLoading(false);
+                    mDetailView.setError("Error: " + response.message());
+                }
+            }
+
+            @Override
+            public void onFailure(Call<CreditTvRespon> call, Throwable t) {
+                mDetailView.showLoading(false);
+                mDetailView.setError("Fatal Error: " + t.getMessage());
+            }
+        });
     }
 
 

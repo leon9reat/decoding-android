@@ -1,8 +1,11 @@
 package com.medialink.submission5.view.favorite;
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -23,6 +26,7 @@ import com.medialink.submission5.contract.FavoriteContract;
 import com.medialink.submission5.model.local.FavoriteItem;
 import com.medialink.submission5.presenter.FavoritePresenter;
 import com.medialink.submission5.view.adapter.MovieFavAdapter;
+import com.medialink.submission5.widget.MovieWidget;
 
 import java.util.List;
 
@@ -30,11 +34,9 @@ import java.util.List;
  * A simple {@link Fragment} subclass.
  */
 public class MovieFavFragment extends Fragment
-    implements FavoriteContract.MovieFavInterface {
+        implements FavoriteContract.MovieFavInterface {
 
     private static final String TAG = "MovieFavFragment";
-    private static final String KEY_LIST_MOVIE = "LIST_MOVIE";
-    private static final String KEY_PAGE = "PAGE";
 
     private ProgressBar movieFavProgress;
     private RecyclerView movieFavRecycler;
@@ -70,6 +72,7 @@ public class MovieFavFragment extends Fragment
             movieFavRecycler.setAdapter(mAdapter);
         }
 
+        // menggunakan content provider
         mFavPresenter.getMovieProvider(getContext());
         //mFavPresenter.getMovie();
 
@@ -110,7 +113,7 @@ public class MovieFavFragment extends Fragment
     public void showMovie(List<FavoriteItem> list) {
         mAdapter.setData(list);
         showLoading(false);
-        Log.d(TAG, "showMovie: "+list.size());
+        Log.d(TAG, "showMovie: " + list.size());
     }
 
     @Override
@@ -129,6 +132,17 @@ public class MovieFavFragment extends Fragment
                     public void onClick(DialogInterface dialog, int i) {
                         mFavPresenter.deleteMovie(movie);
                         mAdapter.removeItem(position);
+
+                        /*Intent intent = new Intent(getActivity(), MovieWidget.class);
+                        intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                        // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+                        // since it seems the onUpdate() is only fired on that:
+                        int[] ids = AppWidgetManager.getInstance(getActivity().getApplication())
+                                .getAppWidgetIds(new ComponentName(getActivity().getApplication(), MovieWidget.class));
+                        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
+                        getActivity().sendBroadcast(intent);
+                         */
+                        mFavPresenter.refreshWidget();
                     }
                 })
                 .setNegativeButton(getString(R.string.label_no), new DialogInterface.OnClickListener() {

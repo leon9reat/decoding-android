@@ -93,7 +93,8 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
 
     @Override
     public void getTvProvider(Context context) {
-
+        mFavTv.showLoading(true);
+        new LoadFavoriteAsyn(context, mFavTv).execute(Const.DETAIL_TV);
     }
 
     @Override
@@ -103,14 +104,27 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
         mFavTv.showLoading(false);
     }
 
+    @Override
+    public void refreshWidget() {
+        mFavView.refreshWidget();
+    }
+
     private static class LoadFavoriteAsyn extends AsyncTask<Integer, Void, ArrayList<FavoriteItem>> {
 
         private final WeakReference<Context> weakContext;
         private final WeakReference<FavoriteContract.MovieFavInterface> weakCallback;
+        private final WeakReference<FavoriteContract.TvFavInterface> weakTvCallback;
 
         public LoadFavoriteAsyn(Context context, FavoriteContract.MovieFavInterface movieInterface) {
             this.weakContext = new WeakReference<>(context);
             this.weakCallback = new WeakReference<>(movieInterface);
+            this.weakTvCallback = null;
+        }
+
+        public LoadFavoriteAsyn(Context context, FavoriteContract.TvFavInterface tvFavInterface) {
+            this.weakContext = new WeakReference<>(context);
+            this.weakTvCallback = new WeakReference<>(tvFavInterface);
+            this.weakCallback = null;
         }
 
         @Override
@@ -153,8 +167,14 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
         @Override
         protected void onPostExecute(ArrayList<FavoriteItem> provFavItems) {
             super.onPostExecute(provFavItems);
-            weakCallback.get().showLoading(false);
-            weakCallback.get().showMovie(provFavItems);
+            if (weakCallback != null) {
+                weakCallback.get().showLoading(false);
+                weakCallback.get().showMovie(provFavItems);
+            } else {
+                weakTvCallback.get().showLoading(false);
+                weakTvCallback.get().showTv(provFavItems);
+            }
+
             Log.d(TAG, "onPostExecute: " + provFavItems.size());
         }
     }

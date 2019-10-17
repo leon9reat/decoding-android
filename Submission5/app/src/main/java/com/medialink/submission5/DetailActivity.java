@@ -1,6 +1,8 @@
 package com.medialink.submission5;
 
 import android.app.Activity;
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -27,6 +29,7 @@ import com.medialink.submission5.model.local.AppDatabase;
 import com.medialink.submission5.model.local.FavoriteDao;
 import com.medialink.submission5.model.local.FavoriteItem;
 import com.medialink.submission5.presenter.DetailPresenter;
+import com.medialink.submission5.widget.MovieWidget;
 
 public class DetailActivity extends AppCompatActivity
         implements DetailContract.DetailInterface {
@@ -141,6 +144,11 @@ public class DetailActivity extends AppCompatActivity
             img.setTint(getResources().getColor(android.R.color.black));
         }
         btnFavorite.setCompoundDrawables(img, null, null, null);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                new ComponentName(getApplication(), MovieWidget.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.stack_view);
     }
 
     private void initView() {

@@ -2,36 +2,22 @@ package com.medialink.submission5.widget;
 
 import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.graphics.Bitmap;
-import android.graphics.drawable.Drawable;
-import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.widget.RemoteViews;
 import android.widget.RemoteViewsService;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-
 import com.bumptech.glide.Glide;
-import com.bumptech.glide.request.target.CustomTarget;
-import com.bumptech.glide.request.transition.Transition;
+import com.medialink.submission5.BuildConfig;
 import com.medialink.submission5.Const;
 import com.medialink.submission5.R;
 import com.medialink.submission5.model.local.AppDatabase;
 import com.medialink.submission5.model.local.FavoriteDao;
 import com.medialink.submission5.model.local.FavoriteItem;
-import com.medialink.submission5.model.provider.FavoriteContentProvider;
-import com.medialink.submission5.model.provider.ProvAppDatabase;
-import com.medialink.submission5.model.provider.ProvFavDao;
 
-import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.List;
-
-import static android.provider.BaseColumns._ID;
 
 public class MovieRemoteViewFactory
         implements RemoteViewsService.RemoteViewsFactory{
@@ -56,8 +42,9 @@ public class MovieRemoteViewFactory
         database = AppDatabase.getInstance(mContext);
         favDao = database.getFavoriteDao();
 
-        listFavorite = favDao.getFavoriteByType(Const.DETAIL_MOVIE);
-        Log.d(TAG, "onDataSetChanged: "+listFavorite.size());
+        listFavorite.clear();
+        //listFavorite.addAll(favDao.getFavoriteByType(Const.DETAIL_MOVIE));
+        listFavorite.addAll(favDao.getAllFavorite());
 
        // new LoadAsync(mContext, this).execute();
         /*Cursor dataCursor = mContext.getContentResolver().query(
@@ -103,20 +90,17 @@ public class MovieRemoteViewFactory
     public RemoteViews getViewAt(int position) {
         final RemoteViews rv = new RemoteViews(mContext.getPackageName(), R.layout.widget_item);
 
-        Glide.with(mContext)
-                .asBitmap()
-                .load(listFavorite.get(position).getPosterPath())
-                .into(new CustomTarget<Bitmap>() {
-                    @Override
-                    public void onResourceReady(@NonNull Bitmap resource, @Nullable Transition<? super Bitmap> transition) {
-                        rv.setImageViewBitmap(R.id.img_poster_widget, resource);
-                    }
-
-                    @Override
-                    public void onLoadCleared(@Nullable Drawable placeholder) {
-
-                    }
-                });
+        try {
+            Bitmap bitmap = Glide.with(mContext)
+                    .asBitmap()
+                    .load(BuildConfig.ImageUrl+listFavorite.get(position).getPosterPath())
+                    .submit()
+                    .get();
+            rv.setImageViewBitmap(R.id.img_poster_widget, bitmap);
+            Log.d(TAG, "getViewAt: "+listFavorite.get(position).getPosterPath());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         rv.setTextViewText(R.id.tv_title_widget, listFavorite.get(position).getTitle());
 
         Bundle extras = new Bundle();

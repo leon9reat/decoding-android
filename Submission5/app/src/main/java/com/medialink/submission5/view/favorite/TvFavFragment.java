@@ -1,6 +1,8 @@
 package com.medialink.submission5.view.favorite;
 
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -23,6 +25,7 @@ import com.medialink.submission5.contract.FavoriteContract;
 import com.medialink.submission5.model.local.FavoriteItem;
 import com.medialink.submission5.presenter.FavoritePresenter;
 import com.medialink.submission5.view.adapter.TvFavAdapter;
+import com.medialink.submission5.widget.MovieWidget;
 
 import java.util.List;
 
@@ -33,8 +36,6 @@ public class TvFavFragment extends Fragment
         implements FavoriteContract.TvFavInterface {
 
     private static final String TAG = "TvFavFragment";
-    private static final String KEY_LIST_TV = "LIST_TV";
-    private static final String KEY_PAGE = "PAGE";
 
     private ProgressBar tvFavProgress;
     private RecyclerView tvFavRecycler;
@@ -70,7 +71,7 @@ public class TvFavFragment extends Fragment
             tvFavRecycler.setAdapter(mAdapter);
         }
 
-        mFavPresenter.getTv();
+        mFavPresenter.getTvProvider(getContext());
 
         return view;
     }
@@ -127,7 +128,8 @@ public class TvFavFragment extends Fragment
                     public void onClick(DialogInterface dialog, int i) {
                         mFavPresenter.deleteTv(tv);
                         mAdapter.removeItem(position);
-                        Log.d(TAG, "itemDelete: hapus disini");
+
+                        mFavPresenter.refreshWidget();
                     }
                 })
                 .setNegativeButton(getString(R.string.label_no), new DialogInterface.OnClickListener() {

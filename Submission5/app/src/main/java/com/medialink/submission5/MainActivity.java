@@ -1,8 +1,6 @@
 package com.medialink.submission5;
 
 import android.app.SearchManager;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
@@ -38,7 +36,6 @@ import com.medialink.submission5.preference.PreferenceActivity;
 import com.medialink.submission5.preference.PreferenceHelper;
 import com.medialink.submission5.presenter.MainPresenter;
 import com.medialink.submission5.view.adapter.MainPagerAdapter;
-import com.medialink.submission5.widget.MovieWidget;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -190,7 +187,7 @@ public class MainActivity extends AppCompatActivity
 
                     } else {
                         if (query.isEmpty()) {
-                            mPresenter.getTv(1);
+                            mPresenter.getTv();
                         } else {
                             mPresenter.getTvFilter(mSearchText);
                         }
@@ -208,7 +205,7 @@ public class MainActivity extends AppCompatActivity
                         if (activeTab == 0) {
                             mPresenter.getMovie();
                         } else {
-                            mPresenter.getTv(1);
+                            mPresenter.getTv();
                         }
                         mSearchText = "";
                         Log.d(TAG, "Reset Searching Text : " + mSearchText);
@@ -239,19 +236,6 @@ public class MainActivity extends AppCompatActivity
                 showSettings();
                 break;
             case R.id.menu_favorite:
-                /*Intent intentWidget = new Intent(this, MovieWidget.class);
-                intentWidget.setAction("com.testing.bro");
-                sendBroadcast(intentWidget);*/
-
-                /*Intent intent = new Intent(this, MovieWidget.class);
-                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
-                // since it seems the onUpdate() is only fired on that:
-                int[] ids = AppWidgetManager.getInstance(getApplication())
-                        .getAppWidgetIds(new ComponentName(getApplication(), MovieWidget.class));
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
-                sendBroadcast(intent);*/
-
                 showFavorite();
                 break;
             case R.id.menu_change_language:
@@ -296,6 +280,8 @@ public class MainActivity extends AppCompatActivity
         super.onActivityResult(requestCode, resultCode, data);
 
         if (requestCode == Const.CHANGE_LANGUAGE_REQUEST) {
+            mPresenter.getMovie();
+            mPresenter.getTv();
             // setelah ganti bahasa, refresh lagi datanya
             //((MovieFragment) getSupportFragmentManager().getFragments().get(0)).refreshMovie();
             //((TvFragment)    getSupportFragmentManager().getFragments().get(1)).refreshTv();
