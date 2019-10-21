@@ -2,7 +2,6 @@
     <string name="app_name">Submission5</string>
 
     <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="content_image">Poster Image</string>
     <string name="example_overview">The true story of Forrest Tucker, from his audacious escape from San Quentin at the age of 70 to an unprecedented string of heists that confounded authorities and enchanted the public. Wrapped up in the pursuit are a detective, who becomes captivated with Forrest’s commitment to his craft, and a woman, who loves him in spite of his chosen profession.</string>
     <string name="example_release_date">Released Data: 2018-01-01</string>
@@ -13,8 +12,6 @@
     <string name="label_change_language">Change Language</string>
     <string name="label_movie">Movie</string>
     <string name="label_tv">Tv Show</string>
-    <string name="appwidget_text">Widget Text</string>
-    <string name="add_widget">Add widget</string>
     <string name="label_no_data">No Data</string>
     <string name="label_setting_notif">Notification Settings</string>
     <string name="pref_key_release_reminder">key_release_reminder</string>

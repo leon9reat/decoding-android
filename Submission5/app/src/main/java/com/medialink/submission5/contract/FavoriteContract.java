@@ -10,6 +10,7 @@ public interface FavoriteContract {
 
     interface FavoriteInterface {
         void showDetail(int detailType, int id);
+        void refreshWidget();
     }
 
     interface MovieFavInterface {
@@ -37,6 +38,7 @@ public interface FavoriteContract {
         void getTv();
         void getTvProvider(Context context);
         void deleteTv(FavoriteItem item);
+        void refreshWidget();
     }
 
 }

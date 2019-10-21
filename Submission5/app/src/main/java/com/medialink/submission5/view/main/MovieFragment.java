@@ -3,6 +3,11 @@ package com.medialink.submission5.view.main;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ProgressBar;
 
 import androidx.annotation.NonNull;
 import androidx.coordinatorlayout.widget.CoordinatorLayout;
@@ -12,12 +17,6 @@ import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
-
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ProgressBar;
 
 import com.google.android.material.snackbar.Snackbar;
 import com.medialink.submission5.Const;
@@ -38,7 +37,6 @@ public class MovieFragment extends Fragment
     implements MainContract.MovieInterface {
 
     private static final String TAG = "MovieFragment";
-    private static final String KEY_LIST_MOVIE = "LIST_MOVIE";
 
     private CoordinatorLayout coordinatorMovie;
     private ProgressBar movieProgress;
@@ -81,29 +79,9 @@ public class MovieFragment extends Fragment
             movieRecycler.setAdapter(mAdapter);
         }
 
-        /*
-        if (savedInstanceState == null) {
-            // loading pertama
-            mPresenter.setMovie(mPage);
-            Log.d(TAG, "onCreateView: pertama");
-        } else {
-            // loading berikut
-            ArrayList<MovieResult> list = savedInstanceState.getParcelableArrayList(KEY_LIST_MOVIE);
-            mPage = savedInstanceState.getInt(KEY_PAGE);
-
-            showMovie(list);
-        }
-         */
         return view;
     }
 
-    @Override
-    public void onSaveInstanceState(@NonNull Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList(KEY_LIST_MOVIE, mListMovie);
-
-        Log.d(TAG, "onSaveInstanceState: "+mListMovie.size());
-    }
 
     @Override
     public void onAttach(@NonNull Context context) {

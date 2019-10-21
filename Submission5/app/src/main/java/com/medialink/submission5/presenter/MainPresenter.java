@@ -1,9 +1,6 @@
 package com.medialink.submission5.presenter;
 
 import com.medialink.submission5.contract.MainContract;
-import com.medialink.submission5.model.tv.TvResult;
-
-import java.util.ArrayList;
 
 public class MainPresenter implements MainContract.PresenterInterface {
 
@@ -54,37 +51,18 @@ public class MainPresenter implements MainContract.PresenterInterface {
     }
 
     @Override
-    public void getTv(int page) {
-        mTvView.showLoading(true);
-
-        final ArrayList<TvResult> list = new ArrayList<>();
-        for (int i = 0; i < 3; i++) {
-            TvResult tv = new TvResult();
-            tv.setName("Judul Tv Show " + i);
-            tv.setFirstAirDate("Airing Date " + i);
-            tv.setOverview("Overview Overview Overview Overview Overview Overview Overview " + i);
-
-            list.add(tv);
-        }
-
-        mTvView.showTv(list);
+    public void getTv() {
+        mTvView.getTv();
     }
 
     @Override
     public void getTvFilter(String s) {
-        mTvView.showLoading(true);
+        mTvView.getTvFilter(s);
+    }
 
-        final ArrayList<TvResult> list = new ArrayList<>();
-        for (int i = 0; i < 2; i++) {
-            TvResult tv = new TvResult();
-            tv.setName(s + " Filter Tv " + i);
-            tv.setFirstAirDate(s + " Filter Airing Date " + i);
-            tv.setOverview(s + "Filter Overview Filter Overview Filter Overview Filter Overview Filter Overview Overview Overview " + i);
-
-            list.add(tv);
-        }
-
-        mTvView.showTv(list);
+    @Override
+    public void getTvRelease(String drTgl, String spTgl) {
+        mTvView.getTvRelease(drTgl, spTgl);
     }
 
 

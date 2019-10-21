@@ -1,5 +1,7 @@
 package com.medialink.submission5;
 
+import android.appwidget.AppWidgetManager;
+import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -17,6 +19,7 @@ import com.medialink.submission5.model.local.FavoriteItem;
 import com.medialink.submission5.presenter.FavoritePresenter;
 import com.medialink.submission5.presenter.MainPresenter;
 import com.medialink.submission5.view.adapter.FavoritePagerAdapter;
+import com.medialink.submission5.widget.MovieWidget;
 
 import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
 
@@ -105,13 +108,26 @@ public class FavoriteActivity extends AppCompatActivity
     }
 
     @Override
+    public void refreshWidget() {
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(
+                new ComponentName(getApplication(), MovieWidget.class));
+        appWidgetManager.notifyAppWidgetViewDataChanged(appWidgetIds, R.id.stack_view);
+    }
+
+    @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_FROM_FAVORITE) {
             if (resultCode == RESULT_OK) {
                 if (data != null) {
                     FavoriteItem item = data.getParcelableExtra("FAVORITE");
-                    mPresenter.getMovie();
+                    if (item.getTypeId() == Const.DETAIL_MOVIE) {
+                        mPresenter.getMovie();
+                    } else {
+                        mPresenter.getTv();
+                    }
+
                     Log.d(TAG, "onActivityResult: return item " + item.getTitle());
                 }
             }

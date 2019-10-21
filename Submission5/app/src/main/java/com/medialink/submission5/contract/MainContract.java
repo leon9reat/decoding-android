@@ -27,9 +27,14 @@ public interface MainContract {
     }
 
     interface TvInterface {
+        void getTv();
+        void getTvFilter(String s);
+        void getTvRelease(String drTgl, String spTgl);
         void showTv(ArrayList<TvResult> list);
         void listClick(TvResult tv, int position);
         void showLoading(Boolean state);
+        void setError(String msg);
+        void showMessage(String msg);
     }
 
     interface PresenterInterface {
@@ -39,8 +44,9 @@ public interface MainContract {
         void getMovie();
         void getMovieFilter(String s);
         void getMovieRelase(String drTgl, String spTgl);
-        void getTv(int page);
+        void getTv();
         void getTvFilter(String s);
+        void getTvRelease(String drTgl, String spTgl);
     }
 
 }
