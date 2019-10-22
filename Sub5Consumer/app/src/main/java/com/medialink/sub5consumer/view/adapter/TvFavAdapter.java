@@ -79,7 +79,7 @@ public class TvFavAdapter extends RecyclerView.Adapter<TvFavAdapter.MyViewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFavTvView.listClick(item, position);
+                mFavTvView.listClick(item);
             }
         });
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {

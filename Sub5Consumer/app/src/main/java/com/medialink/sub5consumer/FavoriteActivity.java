@@ -1,13 +1,17 @@
 package com.medialink.sub5consumer;
 
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager.widget.PagerAdapter;
 import androidx.viewpager.widget.ViewPager;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.android.material.tabs.TabLayout;
 import com.medialink.sub5consumer.contract.FavoriteContract;
+import com.medialink.sub5consumer.model.local.FavoriteItem;
 import com.medialink.sub5consumer.presenter.FavoritePresenter;
 import com.medialink.sub5consumer.view.adapter.FavoritePagerAdapter;
 
@@ -78,7 +82,35 @@ public class FavoriteActivity extends AppCompatActivity
     }
 
     @Override
-    public void showDetail(int detailType, int id) {
+    public void showDetail(int detailType, int id, FavoriteItem item) {
+        Intent intent = new Intent(this, DetailActivity.class);
 
+        Bundle args = new Bundle();
+        args.putInt(Const.KEY_DETAIL_TYPE, detailType);
+        args.putInt(Const.KEY_ID, id);
+        args.putParcelable(Const.TABLE_FAVORITE, item);
+        intent.putExtras(args);
+
+        startActivityForResult(intent, REQUEST_FROM_FAVORITE);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_FROM_FAVORITE) {
+            if (resultCode == RESULT_OK) {
+                if (data != null) {
+                    FavoriteItem item = data.getParcelableExtra("FAVORITE");
+                    if (item.getTypeId() == Const.DETAIL_MOVIE) {
+                        mPresenter.getMovieProvider(getApplicationContext());
+                    } else {
+                        mPresenter.getTvProvider(getApplicationContext());
+                    }
+
+                    Log.d(TAG, "onActivityResult: return item " + item.getTitle());
+                }
+            }
+        }
     }
 }

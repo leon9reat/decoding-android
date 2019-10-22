@@ -3,6 +3,7 @@ package com.medialink.sub5consumer.view.favorite;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -12,12 +13,12 @@ import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.medialink.sub5consumer.Const;
 import com.medialink.sub5consumer.R;
 import com.medialink.sub5consumer.contract.FavoriteContract;
 import com.medialink.sub5consumer.model.local.FavoriteItem;
@@ -60,7 +61,7 @@ public class TvFavFragment extends Fragment
 
         mFavPresenter = FavoritePresenter.getInstance();
         mFavPresenter.setFavTvView(this);
-        mFavPresenter.setDatabase(getContext());
+        mFavPresenter.setDatabase();
 
         mAdapter = new TvFavAdapter(getContext(), mListTv, this);
 
@@ -70,7 +71,7 @@ public class TvFavFragment extends Fragment
             tvFavRecycler.setAdapter(mAdapter);
         }
 
-        mFavPresenter.getTv();
+        mFavPresenter.getTvProvider(getContext());
 
         return view;
     }
@@ -112,8 +113,8 @@ public class TvFavFragment extends Fragment
     }
 
     @Override
-    public void listClick(FavoriteItem tv, int position) {
-
+    public void listClick(FavoriteItem tv) {
+        mFavView.showDetail(Const.DETAIL_TV, tv.getMovieId(), tv);
     }
 
     @Override
@@ -125,9 +126,10 @@ public class TvFavFragment extends Fragment
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.label_yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int i) {
-                        mFavPresenter.deleteTv(tv);
+                        Uri uriWithId = Uri.parse(Const.URI_FAVORITE + "/" + tv.getId());
+                        getContext().getContentResolver().delete(uriWithId, null, null);
+
                         mAdapter.removeItem(position);
-                        Log.d(TAG, "itemDelete: hapus disini");
                     }
                 })
                 .setNegativeButton(getString(R.string.label_no), new DialogInterface.OnClickListener() {

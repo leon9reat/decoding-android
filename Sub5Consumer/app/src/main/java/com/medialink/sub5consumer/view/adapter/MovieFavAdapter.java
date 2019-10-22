@@ -81,7 +81,7 @@ public class MovieFavAdapter extends RecyclerView.Adapter<MovieFavAdapter.MyView
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                mFavMovieView.listClick(item, position);
+                mFavMovieView.listClick(item);
             }
         });
         holder.btnDelete.setOnClickListener(new View.OnClickListener() {

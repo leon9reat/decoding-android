@@ -3,6 +3,7 @@ package com.medialink.sub5consumer.view.favorite;
 
 import android.content.Context;
 import android.content.DialogInterface;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 
+import com.medialink.sub5consumer.Const;
 import com.medialink.sub5consumer.R;
 import com.medialink.sub5consumer.contract.FavoriteContract;
 import com.medialink.sub5consumer.model.local.FavoriteItem;
@@ -59,7 +61,7 @@ public class MovieFavFragment extends Fragment
 
         mFavPresenter = FavoritePresenter.getInstance();
         mFavPresenter.setFavMovieView(this);
-        mFavPresenter.setDatabase(getContext());
+        mFavPresenter.setDatabase();
 
         mAdapter = new MovieFavAdapter(getContext(), mListMovie, this);
 
@@ -69,8 +71,8 @@ public class MovieFavFragment extends Fragment
             movieFavRecycler.setAdapter(mAdapter);
         }
 
-        //mFavPresenter.getMovieProvider(getContext());
-        mFavPresenter.getMovie();
+        mFavPresenter.getMovieProvider(getContext());
+        //mFavPresenter.getMovie();
 
         return view;
     }
@@ -113,8 +115,8 @@ public class MovieFavFragment extends Fragment
     }
 
     @Override
-    public void listClick(FavoriteItem movie, int position) {
-
+    public void listClick(FavoriteItem movie) {
+        mFavView.showDetail(Const.DETAIL_MOVIE, movie.getMovieId(), movie);
     }
 
     @Override
@@ -126,7 +128,9 @@ public class MovieFavFragment extends Fragment
                 .setCancelable(false)
                 .setPositiveButton(getString(R.string.label_yes), new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int i) {
-                        mFavPresenter.deleteMovie(movie);
+                        //mFavPresenter.deleteMovie(movie);
+                        Uri uriWithId = Uri.parse(Const.URI_FAVORITE + "/" + movie.getId());
+                        getContext().getContentResolver().delete(uriWithId, null, null);
                         mAdapter.removeItem(position);
                     }
                 })

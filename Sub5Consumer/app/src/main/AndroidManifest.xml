@@ -3,9 +3,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.medialink.sub5consumer">
 
-    <uses-permission android:name="com.medialink.submission5.READ_DATABASE"/>
-    <uses-permission android:name="com.medialink.submission5.WRITE_DATABASE"/>
-    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="com.medialink.submission5.READ_DATABASE" />
+    <uses-permission android:name="com.medialink.submission5.WRITE_DATABASE" />
+    <uses-permission android:name="android.permission.INTERNET" />
 
     <application
         android:allowBackup="true"
@@ -15,9 +15,11 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
+        <activity android:name=".DetailActivity"></activity>
         <activity android:name=".FavoriteActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>

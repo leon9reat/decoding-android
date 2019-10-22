@@ -32,7 +32,7 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
     }
 
     @Override
-    public void setDatabase(Context context) {
+    public void setDatabase() {
 
     }
 
@@ -63,7 +63,7 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
     }
 
     @Override
-    public void deleteMovie(FavoriteItem item) {
+    public void deleteMovie() {
 
     }
 
@@ -75,11 +75,12 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
 
     @Override
     public void getTvProvider(Context context) {
-
+        mFavTv.showLoading(true);
+        new LoadFavoriteAsyn(context, mFavTv).execute(Const.DETAIL_TV);
     }
 
     @Override
-    public void deleteTv(FavoriteItem item) {
+    public void deleteTv() {
 
     }
 
@@ -87,10 +88,18 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
 
         private final WeakReference<Context> weakContext;
         private final WeakReference<FavoriteContract.MovieFavInterface> weakCallback;
+        private final WeakReference<FavoriteContract.TvFavInterface> weakTvCallback;
 
         public LoadFavoriteAsyn(Context context, FavoriteContract.MovieFavInterface movieInterface) {
             this.weakContext = new WeakReference<>(context);
             this.weakCallback = new WeakReference<>(movieInterface);
+            this.weakTvCallback = null;
+        }
+
+        public LoadFavoriteAsyn(Context context, FavoriteContract.TvFavInterface tvFavInterface) {
+            this.weakContext = new WeakReference<>(context);
+            this.weakTvCallback = new WeakReference<>(tvFavInterface);
+            this.weakCallback = null;
         }
 
         @Override
@@ -102,8 +111,10 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
         @Override
         protected ArrayList<FavoriteItem> doInBackground(Integer... params) {
             Context context = weakContext.get();
+
+            String uri = String.format("%s/%d",Const.URI_FAVORITE, params[0].intValue());
             Cursor dataCursor = context.getContentResolver().query(
-                    Uri.parse(Const.URI_FAVORITE + "/" + params.toString()),
+                    Uri.parse(uri),
                     null,
                     null,
                     null,
@@ -131,7 +142,14 @@ public class FavoritePresenter implements FavoriteContract.PresenterFavInterface
         @Override
         protected void onPostExecute(ArrayList<FavoriteItem> provFavItems) {
             super.onPostExecute(provFavItems);
-            weakCallback.get().showMovie(provFavItems);
+            if (weakCallback != null) {
+                weakCallback.get().showLoading(false);
+                weakCallback.get().showMovie(provFavItems);
+            } else {
+                weakTvCallback.get().showLoading(false);
+                weakTvCallback.get().showTv(provFavItems);
+            }
+
             Log.d(TAG, "onPostExecute: " + provFavItems.size());
         }
     }
